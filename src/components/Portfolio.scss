@@ -188,24 +188,32 @@
             font-size: 1.5rem;
         }
 
-        .btns{
+        .btns {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
-            button{
-                height: 40px;
-                width: 120px;
-                border:none;
-                background-color: #002d5b;
-                color: white;
-                border-radius: 10px;
+          
+            button {
+              height: 40px;
+              width: 120px;
+              border: none;
+              background-color: #002d5b;
+              color: white;
+              border-radius: 10px;
+              cursor: pointer;
+              transition: 0.3s;
             }
-            .Github{
-                background-color: rgb(236 91 83);
+          
+            .Github {
+              background-color: rgb(236, 91, 83);
             }
-            
-
-        }
+          
+            .disabled {
+              background-color: grey !important;
+              cursor: not-allowed;
+              opacity: 0.6;
+            }
+          }
 
 
       }

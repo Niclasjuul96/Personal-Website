@@ -8,48 +8,60 @@ function Portfolio() {
   const [selectedProject, setSelectedProject] = useState(null);
   document.title = 'Portfolio';
 
-
   const onProjectclick = (project) => {
     setSelectedProject(project);
-  }
+  };
 
   const closeModal = () => {
     setSelectedProject(null);
-  }
+  };
 
   const handleClicklive = () => {
-    window.open(selectedProject.livepreviewurl);
-  }
+    if (selectedProject.livepreviewurl) {
+      window.open(selectedProject.livepreviewurl);
+    }
+  };
 
   const handleClickGit = () => {
     window.open(selectedProject.githuburl);
-  }
-  
-  let counter = 0; 
-  const projectsContent = projects.map(project => {
+  };
+
+  let counter = 0;
+  const projectsContent = projects.map((project) => {
     counter++;
-    if( counter === 1 || counter === 9){
+    if (counter === 1 || counter === 9) {
       return (
-        <div id={"image" + counter} className='big-box' key={project.key}>
-          <img src={project.imgURL} alt='big-project' className='big-image' onClick={() => {onProjectclick(project)}} key={project.key}/>
+        <div id={"image" + counter} className='big-box' key={project.id}>
+          <img
+            src={project.imgURL}
+            alt='big-project'
+            className='big-image'
+            onClick={() => {
+              onProjectclick(project);
+            }}
+          />
         </div>
-      )
-    }else if(counter <= 8){
-      return ( 
-      <div id={"image" + counter} className='small-box' key={project.key}>
-        <img src={project.imgURL} alt='small-project' className='small-image' onClick={() => {onProjectclick(project)}} key={project.key}/>
-      </div>
-      )
-    }else{
-      return (<></>)
+      );
+    } else if (counter <= 8) {
+      return (
+        <div id={"image" + counter} className='small-box' key={project.id}>
+          <img
+            src={project.imgURL}
+            alt='small-project'
+            className='small-image'
+            onClick={() => {
+              onProjectclick(project);
+            }}
+          />
+        </div>
+      );
+    } else {
+      return <></>;
     }
   });
 
-
-
   return (
     <div className="Portfolio">
-
       <section className='heading'>
         <div className='title'>
           <h4>Portfolio</h4>
@@ -58,19 +70,15 @@ function Portfolio() {
       </section>
 
       <section className='subheading'>
-        <div className='subtitle'>
-            What Services You Will Get From Me 
-          </div>
-          <div className='description'>
-            Here is a list over my last projects, so you can have a sneak peek and see. 
-            You can click on the projets and it will direct you to the project. Feel free to contact me for more informations about the projects. 
-          </div>
-          <div className='underline'></div>
+        <div className='subtitle'>What Services You Will Get From Me</div>
+        <div className='description'>
+          Here is a list over my last projects, so you can have a sneak peek and see. You can click on the projects
+          and it will direct you to the project. Feel free to contact me for more informations about the projects.
+        </div>
+        <div className='underline'></div>
       </section>
 
-      <section className='projects'>
-        {projectsContent}
-      </section>
+      <section className='projects'>{projectsContent}</section>
 
       {selectedProject && (
         <div className="modal">
@@ -82,25 +90,30 @@ function Portfolio() {
             {selectedProject.accounts && (
               <p>
                 {selectedProject.accounts.map((account, index) => (
-                  <>
+                  <React.Fragment key={index}>
                     {account}
                     {index < selectedProject.accounts.length - 1 && <br />}
-                  </>
+                  </React.Fragment>
                 ))}
               </p>
             )}
             <p className='techstack'><b>TechStack used:</b> {selectedProject.tech.join(", ")}</p>
             <div className="btns">
-              <button className='livepreview' onClick={handleClicklive}>Live Preview</button>
+              <button
+                className={`livepreview ${!selectedProject.livepreviewurl ? "disabled" : ""}`}
+                onClick={handleClicklive}
+                disabled={!selectedProject.livepreviewurl}
+              >
+                Live Preview
+              </button>
               <button className='Github' onClick={handleClickGit}>Github Repository</button>
             </div>
           </div>
         </div>
       )}
-
-  
     </div>
   );
 }
+
 
 export default Portfolio;

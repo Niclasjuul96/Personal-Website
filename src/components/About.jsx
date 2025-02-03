@@ -26,7 +26,8 @@ function About() {
           <div className='underline'></div>
           <div className='description'>
             Hey I'm Niclas Schæffer, I am a front-end / back-end web developer, 
-            was studying on DTU lyngby, Denmark for my Software Technology degree. 
+            was studying on DTU lyngby, Denmark for my Software Technology degree, 
+            and i didn't finish the education, because i had to go a different route. 
             I create successful websites that are fast, easy to use and built with best practices. 
           </div>
           <div className='description'>

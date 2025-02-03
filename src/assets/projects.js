@@ -20,7 +20,7 @@ const projects = [
     githuburl: 
       "https://github.com/Niclasjuul96/Chat-App",
     livepreviewurl:
-      "http://chatapp.niclasjuul.com/",
+      "http://chatapp.niclasjuul.dk/",
     tech:
       ["react", "javascript", "node.js","json","firebase"],
     accounts:
@@ -36,7 +36,7 @@ const projects = [
     githuburl: 
       "https://github.com/Niclasjuul96/NoteEase",
     livepreviewurl:
-      "http://noteease.niclasjuul.com/",
+      "http://noteease.niclasjuul.dk/",
     tech:
       ["react", "javascript", "node.js","json"]
   },
@@ -51,7 +51,7 @@ const projects = [
     githuburl: 
       "https://github.com/Niclasjuul96/SimonGame", 
     livepreviewurl: 
-      "http://simongame.niclasjuul.com/",
+      "http://simongame.niclasjuul.dk/",
     tech: 
       ["Html", "CSS", "JavaScript"]
   },
@@ -66,7 +66,7 @@ const projects = [
     githuburl: 
       "https://github.com/Niclasjuul96/PasswordGenerator/tree/main",
     livepreviewurl: 
-      "http://passwordgenerator.niclasjuul.com/",
+      "http://passwordgenerator.niclasjuul.dk/",
     tech: 
       [ "html", "CSS", "JavaScript"]
   }, 
