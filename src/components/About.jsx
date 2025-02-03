@@ -26,7 +26,7 @@ function About() {
           <div className='underline'></div>
           <div className='description'>
             Hey I'm Niclas Schæffer, I am a front-end / back-end web developer, 
-            studying on DTU lyngby, Denmark for my Software Technology degree. 
+            was studying on DTU lyngby, Denmark for my Software Technology degree. 
             I create successful websites that are fast, easy to use and built with best practices. 
           </div>
           <div className='description'>
@@ -72,7 +72,7 @@ function About() {
               at the button below.
           </div>
           <div className='socials'>
-          <form method="get" target="_blank" action="https://niclasjuul.com/CV.pdf">
+          <form method="get" target="_blank" action="https://niclasjuul.dk/CV.pdf">
             <button className="download-cv" type="submit">Download CV</button>
           </form>
             <div className='icons'>

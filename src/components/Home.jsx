@@ -4,6 +4,8 @@ import Homeabout from "../assets/section-1-bg1.jpg"
 import Avatar from "../assets/ProfilePictureJuul.png"
 import Services from "../assets/services"
 import Experiences from "../assets/WorkExperience"
+import otherExperiences from "../assets/OtherWorkExperience"
+import Education from '../assets/Education';
 
 function Home() {
   document.title = "Home";
@@ -14,7 +16,7 @@ function Home() {
       <div className='card-description'>{service.description}</div>
     </div>);
 
-  let workcounter = -1;
+let workcounter = -1;
   const workExperience1 = Experiences.map((experience) => {
     workcounter++;
     if(workcounter < 2){
@@ -25,9 +27,6 @@ function Home() {
           <div className='card-description'>{experience.description}</div>
         </div>
       );
-        
-  
-      
     }
     return null;
   });
@@ -36,6 +35,77 @@ function Home() {
   const workExperience2 = Experiences.map((experience) => {
     workcounter++;
     if(workcounter >= 2){
+      return (
+        <div className='card-experience' key={experience.key}>
+          <div className='card-title'>{experience.title}</div>
+          <div className='card-duration'>{experience.duration}</div>
+          <div className='card-description'>{experience.description}</div>
+        </div>
+      );
+    }
+    return null;
+  });
+
+
+  let educationCounter = -1;
+  const education1 = Education.map((edu) => {
+    educationCounter++;
+    if(educationCounter < 2){
+      return (
+        <div className='card-experience' key={edu.key}>
+          <div className='card-title'>{edu.title}</div>
+          <div className='card-duration'>{edu.duration}</div>
+          <ul className='subjects-list'>
+            {edu.subjects.map((subject, index) => (
+          <li key={index}>{subject}</li>
+  ))}
+</ul>
+
+        </div>
+      );
+    }
+    return null;
+  });
+
+  educationCounter = -1;
+  const education2 = Education.map((edu) => {
+    educationCounter++;
+    if(educationCounter >= 2){
+      return (
+        <div className='card-experience' key={edu.key}>
+          <div className='card-title'>{edu.title}</div>
+          <div className='card-duration'>{edu.duration}</div>
+          <ul className='subjects-list'>
+            {edu.subjects.map((subject, index) => (
+          <li key={index}>{subject}</li>
+  ))}
+</ul>
+
+        </div>
+      );
+    }
+    return null;
+  });
+
+  let otherworkcounter = -1;
+  const otherworkExperience1 = otherExperiences.map((experience) => {
+    otherworkcounter++;
+    if(otherworkcounter < 2){
+      return (
+        <div className='card-experience' key={experience.key}>
+          <div className='card-title'>{experience.title}</div>
+          <div className='card-duration'>{experience.duration}</div>
+          <div className='card-description'>{experience.description}</div>
+        </div>
+      );
+    }
+    return null;
+  });
+
+  otherworkcounter = -1;
+  const otherworkExperience2 = otherExperiences.map((experience) => {
+    otherworkcounter++;
+    if(otherworkcounter >= 2){
       return (
         <div className='card-experience' key={experience.key}>
           <div className='card-title'>{experience.title}</div>
@@ -143,25 +213,55 @@ function Home() {
           What Services I'm Providing
         </div>
         <div className='subtext'>
-          <p>below you can see what services i provide.</p>
+          <p>Below you can see what services I provide.</p>
         </div>
         <section className='content'>
           {servicescontent}
         </section>
       </section>
-
+      
       <section className='Work-Experience'>
         <div className='Heading'>
           Work Experience
         </div>
         <div className='subtext'>
-          below you can see what work experience i have in this field.
+          Below you can see what work experience I have in this field.
         </div>
         <div className='content-1'>
           {workExperience1}
         </div>
         <div className='content-2'>
           {workExperience2}
+        </div>
+      </section>
+
+      <section className='Work-Experience'>
+        <div className='Heading'>
+          Education
+        </div>
+        <div className='subtext'>
+          Below you can see what education I have gone through.
+        </div>
+        <div className='content-1'>
+          {education1}
+        </div>
+        <div className='content-2'>
+          {education2}
+        </div>
+      </section>
+      
+      <section className='Work-Experience'>
+        <div className='Heading'>
+          Other Work Experience
+        </div>
+        <div className='subtext'>
+          Below you can see what other work experience I have.
+        </div>
+        <div className='content-1'>
+          {otherworkExperience1}
+        </div>
+        <div className='content-2'>
+          {otherworkExperience2}
         </div>
       </section>
     </div>
