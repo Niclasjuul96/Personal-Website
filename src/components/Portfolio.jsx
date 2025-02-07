@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import './Portfolio.scss';
-import projects from "../assets/projects"
-
-
+import projects from "../assets/projects";
 
 function Portfolio() {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -17,7 +15,7 @@ function Portfolio() {
   };
 
   const handleClicklive = () => {
-    if (selectedProject.livepreviewurl) {
+    if (selectedProject?.livepreviewurl) {
       window.open(selectedProject.livepreviewurl);
     }
   };
@@ -26,39 +24,11 @@ function Portfolio() {
     window.open(selectedProject.githuburl);
   };
 
-  let counter = 0;
-  const projectsContent = projects.map((project) => {
-    counter++;
-    if (counter === 1 || counter === 9) {
-      return (
-        <div id={"image" + counter} className='big-box' key={project.id}>
-          <img
-            src={project.imgURL}
-            alt='big-project'
-            className='big-image'
-            onClick={() => {
-              onProjectclick(project);
-            }}
-          />
-        </div>
-      );
-    } else if (counter <= 8) {
-      return (
-        <div id={"image" + counter} className='small-box' key={project.id}>
-          <img
-            src={project.imgURL}
-            alt='small-project'
-            className='small-image'
-            onClick={() => {
-              onProjectclick(project);
-            }}
-          />
-        </div>
-      );
-    } else {
-      return <></>;
-    }
-  });
+  const projectsContent = projects.map((project, index) => (
+    <div key={project.id} className='project-box' onClick={() => onProjectclick(project)}>
+      <img src={project.imgURL} alt={project.title} className='project-image' />
+    </div>
+  ));
 
   return (
     <div className="Portfolio">
@@ -73,12 +43,12 @@ function Portfolio() {
         <div className='subtitle'>What Services You Will Get From Me</div>
         <div className='description'>
           Here is a list over my last projects, so you can have a sneak peek and see. You can click on the projects
-          and it will direct you to the project. Feel free to contact me for more informations about the projects.
+          and it will direct you to the project. Feel free to contact me for more information about the projects.
         </div>
         <div className='underline'></div>
       </section>
 
-      <section className='projects'>{projectsContent}</section>
+      <section className='projects-grid'>{projectsContent}</section>
 
       {selectedProject && (
         <div className="modal">
@@ -114,6 +84,5 @@ function Portfolio() {
     </div>
   );
 }
-
 
 export default Portfolio;
