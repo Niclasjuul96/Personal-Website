@@ -51,32 +51,34 @@ function Portfolio() {
       <section className='projects-grid'>{projectsContent}</section>
 
       {selectedProject && (
-        <div className="modal">
-          <div className="content">
-            <span className="close" onClick={closeModal}>&times;</span>
-            <img className='image' src={selectedProject.imgURL} alt='project'></img>
-            <h2 className='title'>{selectedProject.title}</h2>
-            <p className='detail'>{selectedProject.detail}</p>
-            {selectedProject.accounts && (
-              <p>
-                {selectedProject.accounts.map((account, index) => (
-                  <React.Fragment key={index}>
-                    {account}
-                    {index < selectedProject.accounts.length - 1 && <br />}
-                  </React.Fragment>
-                ))}
-              </p>
-            )}
-            <p className='techstack'><b>TechStack used:</b> {selectedProject.tech.join(", ")}</p>
-            <div className="btns">
-              <button
-                className={`livepreview ${!selectedProject.livepreviewurl ? "disabled" : ""}`}
-                onClick={handleClicklive}
-                disabled={!selectedProject.livepreviewurl}
-              >
-                Live Preview
-              </button>
-              <button className='Github' onClick={handleClickGit}>Github Repository</button>
+        <div className="modal-wrapper" onClick={closeModal}>
+          <div className="modal">
+            <div className="content">
+              <span className="close" onClick={closeModal}>&times;</span>
+              <img className='image' src={selectedProject.imgURL} alt='project'></img>
+              <h2 className='title'>{selectedProject.title}</h2>
+              <p className='detail'>{selectedProject.detail}</p>
+              {selectedProject.accounts && (
+                <p>
+                  {selectedProject.accounts.map((account, index) => (
+                    <React.Fragment key={index}>
+                      {account}
+                      {index < selectedProject.accounts.length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </p>
+              )}
+              <p className='techstack'><b>TechStack used:</b> {selectedProject.tech.join(", ")}</p>
+              <div className="btns">
+                <button
+                  className={`livepreview ${!selectedProject.livepreviewurl ? "disabled" : ""}`}
+                  onClick={handleClicklive}
+                  disabled={!selectedProject.livepreviewurl}
+                >
+                  Live Preview
+                </button>
+                <button className='Github' onClick={handleClickGit}>Github Repository</button>
+              </div>
             </div>
           </div>
         </div>
