@@ -2,7 +2,7 @@ const OtherExperiences = [
     {
         key: 1, 
         title: "Bog og Ide",
-        duration: "December 2019 - Present",
+        duration: "December 2019 - Marts 2025",
         description: "Sales of books, board games, and toys. Assisted customers with their requests."
     },
     {
