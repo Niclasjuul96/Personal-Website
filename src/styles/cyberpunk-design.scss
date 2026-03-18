@@ -1,0 +1,614 @@
+/**
+ * CYBERPUNK PORTFOLIO REDESIGN - DESIGN SYSTEM V2
+ * Bold, Modern, Tech-Focused Aesthetic
+ * Dark Mode + Neon Accents + Dramatic Effects
+ */
+
+/* ========================================
+   NEON COLOR PALETTE
+   ======================================== */
+$neon-cyan: #00f0ff;
+$neon-cyan-light: #00ffff;
+$neon-magenta: #ff00ff;
+$neon-magenta-light: #ff1493;
+$neon-lime: #00ff00;
+$neon-yellow: #ffff00;
+$neon-pink: #ff006e;
+
+// Dark backgrounds
+$dark-bg: #0a0e27;
+$dark-bg-secondary: #1a1f3a;
+$dark-panel: #151d38;
+$dark-border: #2a3f5f;
+
+// Text colors
+$text-primary: #ffffff;
+$text-secondary: #b0b5c0;
+$text-muted: #7a7f8f;
+
+// Accents
+$accent-primary: $neon-cyan;
+$accent-secondary: $neon-magenta;
+$accent-tertiary: $neon-lime;
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+$font-primary: 'Space Grotesk', 'Courier New', monospace;
+$font-accent: 'Orbitron', 'Arial Black', sans-serif;
+$font-mono: 'Courier New', monospace;
+
+$heading-1: (
+  size: 4rem,
+  weight: 900,
+  letter-spacing: -2px,
+);
+
+$heading-2: (
+  size: 2.5rem,
+  weight: 800,
+  letter-spacing: -1px,
+);
+
+$heading-3: (
+  size: 1.75rem,
+  weight: 700,
+  letter-spacing: 0,
+);
+
+$body-large: (
+  size: 1.125rem,
+  weight: 400,
+  line-height: 1.6,
+);
+
+$body-regular: (
+  size: 1rem,
+  weight: 400,
+  line-height: 1.6,
+);
+
+$body-small: (
+  size: 0.875rem,
+  weight: 400,
+  line-height: 1.5,
+);
+
+/* ========================================
+   SPACING SCALE
+   ======================================== */
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
+$space-2xl: 3rem;
+$space-3xl: 4rem;
+$space-4xl: 6rem;
+
+/* ========================================
+   SHADOW & GLOW EFFECTS
+   ======================================== */
+$glow-cyan: 0 0 10px $neon-cyan, 0 0 20px rgba($neon-cyan, 0.5);
+$glow-magenta: 0 0 10px $neon-magenta, 0 0 20px rgba($neon-magenta, 0.5);
+$glow-lime: 0 0 10px $neon-lime, 0 0 20px rgba($neon-lime, 0.5);
+$glow-pink: 0 0 10px $neon-pink, 0 0 20px rgba($neon-pink, 0.5);
+
+$shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.4);
+$shadow-md: 0 8px 32px rgba(0, 0, 0, 0.6);
+$shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.8);
+
+/* ========================================
+   TRANSITIONS
+   ======================================== */
+$transition-fast: 100ms ease-out;
+$transition-base: 200ms ease-out;
+$transition-smooth: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* ========================================
+   BREAKPOINTS
+   ======================================== */
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+/* ========================================
+   MIXINS
+   ======================================== */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin neon-border($color) {
+  border: 2px solid $color;
+  box-shadow: inset 0 0 10px rgba($color, 0.3), 0 0 10px rgba($color, 0.5);
+}
+
+@mixin neon-glow($color) {
+  text-shadow: 0 0 10px $color, 0 0 20px rgba($color, 0.6);
+  color: $color;
+}
+
+@mixin glass-morphism {
+  background: rgba(26, 31, 58, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+@mixin cyber-card {
+  @include glass-morphism;
+  padding: $space-2xl;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $neon-cyan, transparent);
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba($neon-cyan, 0.5), 0 8px 32px rgba(0, 0, 0, 0.6);
+    border-color: rgba(0, 240, 255, 0.3);
+  }
+}
+
+@mixin cyber-button {
+  font-family: $font-primary;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  padding: $space-md $space-2xl;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all $transition-base;
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    transition: left $transition-base;
+    z-index: -1;
+  }
+
+  &:hover {
+    &::before {
+      left: 0;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $neon-cyan;
+    outline-offset: 2px;
+  }
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+
+  @font-face {
+    font-family: 'Space Grotesk';
+    src: url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+  }
+
+  @font-face {
+    font-family: 'mclarenregular';
+    src: url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff2')
+        format('woff2'),
+      url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff')
+        format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+
+body {
+  font-family: $font-primary;
+  background: linear-gradient(135deg, $dark-bg 0%, $dark-bg-secondary 100%);
+  color: $text-primary;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: $neon-cyan;
+  color: $dark-bg;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $neon-cyan;
+  border-radius: 0;
+
+  &:hover {
+    background: $neon-magenta;
+  }
+}
+
+/* ========================================
+   APP LAYOUT
+   ======================================== */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: $dark-bg;
+  position: relative;
+}
+
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    600px at 20% 50%,
+    rgba($neon-cyan, 0.1) 0%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.Header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba($neon-cyan, 0.2);
+  box-shadow: 0 0 20px rgba($neon-cyan, 0.1);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4xl;
+  padding: $space-3xl 0;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: $breakpoint-md) {
+    gap: $space-2xl;
+    padding: $space-2xl 0;
+  }
+}
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+h1,
+.h1 {
+  font-size: map-get($heading-1, size);
+  font-weight: map-get($heading-1, weight);
+  letter-spacing: map-get($heading-1, letter-spacing);
+  color: $text-primary;
+  font-family: $font-accent;
+}
+
+h2,
+.h2 {
+  font-size: map-get($heading-2, size);
+  font-weight: map-get($heading-2, weight);
+  letter-spacing: map-get($heading-2, letter-spacing);
+  color: $text-primary;
+  font-family: $font-accent;
+}
+
+h3,
+.h3 {
+  font-size: map-get($heading-3, size);
+  font-weight: map-get($heading-3, weight);
+  color: $text-primary;
+  font-family: $font-accent;
+}
+
+p {
+  color: $text-secondary;
+  line-height: 1.8;
+
+  &.lead {
+    font-size: map-get($body-large, size);
+    color: $text-primary;
+  }
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+.btn {
+  @include cyber-button;
+
+  &.btn-primary {
+    @include neon-border($neon-cyan);
+    @include neon-glow($neon-cyan);
+
+    &::before {
+      background: rgba($neon-cyan, 0.1);
+    }
+
+    &:hover {
+      @include neon-glow($neon-cyan);
+      box-shadow: $glow-cyan;
+    }
+  }
+
+  &.btn-secondary {
+    @include neon-border($neon-magenta);
+    @include neon-glow($neon-magenta);
+
+    &::before {
+      background: rgba($neon-magenta, 0.1);
+    }
+
+    &:hover {
+      @include neon-glow($neon-magenta);
+      box-shadow: $glow-magenta;
+    }
+  }
+
+  &.btn-accent {
+    @include neon-border($neon-lime);
+    color: $neon-lime;
+
+    &::before {
+      background: rgba($neon-lime, 0.1);
+    }
+
+    &:hover {
+      @include neon-glow($neon-lime);
+      box-shadow: $glow-lime;
+    }
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-3xl;
+
+  @media (max-width: $breakpoint-lg) {
+    max-width: 100%;
+    padding: 0 $space-2xl;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 $space-lg;
+  }
+}
+
+.section {
+  padding: $space-3xl 0;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-2xl 0;
+  }
+}
+
+.section-heading {
+  margin-bottom: $space-3xl;
+
+  h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: $space-lg;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, $neon-cyan, $neon-magenta);
+      box-shadow: 0 0 10px rgba($neon-cyan, 0.8);
+    }
+  }
+
+  p {
+    max-width: 600px;
+    margin-top: $space-lg;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: $space-2xl;
+
+  &.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  &.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  &.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  @media (max-width: $breakpoint-md) {
+    gap: $space-lg;
+
+    &.grid-3,
+    &.grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.text-primary {
+  @include neon-glow($neon-cyan);
+}
+
+.text-secondary {
+  @include neon-glow($neon-magenta);
+}
+
+.text-accent {
+  @include neon-glow($neon-lime);
+}
+
+.text-muted {
+  color: $text-muted;
+}
+
+/* ========================================
+   ANIMATION KEYFRAMES
+   ======================================== */
+@keyframes glitch {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: translate(-2px, -2px);
+  }
+
+  20% {
+    clip-path: inset(92% 0 1% 0);
+    transform: translate(2px, 2px);
+  }
+
+  40% {
+    clip-path: inset(43% 0 1% 0);
+    transform: translate(-2px, 2px);
+  }
+
+  60% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(2px, -2px);
+  }
+
+  80% {
+    clip-path: inset(54% 0 7% 0);
+    transform: translate(-2px, -2px);
+  }
+
+  100% {
+    clip-path: inset(58% 0 43% 0);
+    transform: translate(2px, 2px);
+  }
+}
+
+@keyframes neon-flicker {
+  0%,
+  18%,
+  22%,
+  25%,
+  54%,
+  56%,
+  100% {
+    text-shadow: 0 0 10px $neon-cyan, 0 0 20px rgba($neon-cyan, 0.8);
+  }
+
+  20%,
+  24%,
+  55% {
+    text-shadow: none;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-neon {
+  0%,
+  100% {
+    box-shadow: 0 0 10px $neon-cyan, 0 0 20px rgba($neon-cyan, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 20px $neon-cyan, 0 0 40px rgba($neon-cyan, 0.8);
+  }
+}
+
+.animate-glitch {
+  animation: glitch 2s infinite;
+}
+
+.animate-flicker {
+  animation: neon-flicker 1.5s infinite;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out;
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s infinite;
+}

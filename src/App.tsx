@@ -1,31 +1,30 @@
 import React from 'react';
-import './App.scss';
-import About from './components/About/About';
-import Contact from './components/Contact/Contact';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
+import About from './components/About/About';
 import Portfolio from './components/Portfolio/Portfolio';
+import Contact from './components/Contact/Contact';
+import './App.scss';
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <Router>
-        <div className='Header'>
-          <Header />
-        </div>
-        <div className='body'>
+    <Router>
+      <div className="App">
+        <Header />
+        <main className="body">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
-        </div>
-      </Router>
-    </div>
+        </main>
+      </div>
+    </Router>
   );
-}
+};
+
+App.displayName = 'App';
 
 export default App;

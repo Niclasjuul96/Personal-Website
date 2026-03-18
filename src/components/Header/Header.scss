@@ -1,0 +1,163 @@
+@import '../../styles/cyberpunk-design.scss';
+
+.Header-container {
+  @include flex-between;
+  @include glass-morphism;
+  padding: $space-lg $space-3xl;
+  gap: $space-2xl;
+  border: 1px solid rgba($neon-cyan, 0.2);
+  transition: all $transition-base;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-md $space-lg;
+  }
+}
+
+.logo {
+  @include flex-center;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+
+  img {
+    height: 50px;
+    width: auto;
+    filter: drop-shadow(0 0 5px $neon-cyan);
+    transition: all $transition-base;
+
+    &:hover {
+      filter: drop-shadow(0 0 15px $neon-cyan) brightness(1.2);
+      transform: scale(1.1);
+    }
+  }
+}
+
+.navbar {
+  @include flex-center;
+  flex: 1;
+  gap: $space-xl;
+
+  #navbar {
+    @include flex-center;
+    list-style: none;
+    gap: $space-2xl;
+    margin: 0;
+    padding: 0;
+
+    li {
+      position: relative;
+
+      a {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: $text-secondary;
+        text-decoration: none;
+        transition: all $transition-base;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: $space-sm 0;
+
+        &:hover,
+        &.active {
+          @include neon-glow($neon-cyan);
+        }
+
+        &.active {
+          font-weight: 900;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, $neon-cyan, transparent);
+            box-shadow: 0 0 10px $neon-cyan;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    display: none;
+
+    &.active {
+      display: flex;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(26, 31, 58, 0.95);
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba($neon-cyan, 0.3);
+      z-index: 999;
+
+      #navbar {
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+
+        li {
+          width: 100%;
+          border-bottom: 1px solid rgba($neon-cyan, 0.1);
+
+          a {
+            display: block;
+            padding: $space-lg;
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+}
+
+.menu-icon {
+  display: none;
+  @include flex-center;
+  cursor: pointer;
+  padding: $space-sm;
+  color: $neon-cyan;
+  font-size: 1.5rem;
+  transition: all $transition-base;
+  border: 2px solid rgba($neon-cyan, 0.5);
+  background: transparent;
+
+  &:hover {
+    box-shadow: $glow-cyan;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    display: flex;
+  }
+}
+
+.btn {
+  @include cyber-button;
+  font-size: 0.9rem;
+  padding: $space-md $space-xl;
+
+  &.Hireme {
+    @include neon-border($neon-cyan);
+    @include neon-glow($neon-cyan);
+
+    &::before {
+      background: rgba($neon-cyan, 0.1);
+    }
+
+    &:hover {
+      box-shadow: $glow-cyan;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-md $space-lg;
+    font-size: 0.85rem;
+  }
+}
