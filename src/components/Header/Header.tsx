@@ -18,10 +18,6 @@ const Header: React.FC = () => {
     window.location.href = './';
   };
 
-  const handleHireClick = (): void => {
-    window.location.href = './contact';
-  };
-
   return (
     <div className="Header-container">
       <div className="logo" onClick={handleLogoClick}>
@@ -54,11 +50,6 @@ const Header: React.FC = () => {
           </li>
         </ul>
       </nav>
-      <div className="btn">
-        <button className="Hireme" onClick={handleHireClick}>
-          Hire me!
-        </button>
-      </div>
     </div>
   );
 };

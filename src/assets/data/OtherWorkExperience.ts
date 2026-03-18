@@ -4,7 +4,7 @@ const otherExperiences: Experience[] = [
   {
     id: 1,
     title: 'Bog og Ide',
-    duration: 'December 2019 - Marts 2025',
+    duration: 'December 2019 - December 2025',
     description:
       'Sales of books, board games, and toys. Assisted customers with their requests.',
   },

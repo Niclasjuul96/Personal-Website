@@ -152,7 +152,7 @@
       justify-content: center;
       align-items: center;
       border: 2px solid $neon-cyan;
-      background: transparent;
+      background: rgba($neon-cyan, 0.05);
       color: $neon-cyan;
       text-decoration: none;
       font-size: 1.3rem;
@@ -160,25 +160,12 @@
       box-shadow: inset 0 0 10px rgba($neon-cyan, 0.2);
       position: relative;
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: rgba($neon-cyan, 0.1);
-        transition: left $transition-base;
-        z-index: -1;
-      }
-
       &:hover {
-        &::before {
-          left: 0;
-        }
-
-        box-shadow: $glow-cyan;
-        transform: scale(1.2) translateY(-4px);
+        background: rgba($neon-cyan, 0.15);
+        border-color: $neon-magenta;
+        color: $neon-magenta;
+        box-shadow: 0 0 20px rgba($neon-cyan, 0.8), inset 0 0 15px rgba($neon-magenta, 0.2);
+        transform: scale(1.15) translateY(-4px);
       }
     }
   }
@@ -335,7 +322,10 @@
 
   .work-experience-row,
   .education-row,
-  .other-work-row {
+  .other-work-row,
+  .work-experience-grid,
+  .education-grid,
+  .other-work-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $space-2xl;

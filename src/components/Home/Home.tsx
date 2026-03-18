@@ -73,9 +73,9 @@ const Home: React.FC = () => {
     []
   );
 
-  const workExperience1 = useMemo(
+  const allWorkExperiences = useMemo(
     () =>
-      sliceArray(workExperiences, 0, 2).map((exp) => (
+      workExperiences.map((exp) => (
         <CardExperience
           key={exp.id}
           title={exp.title}
@@ -86,22 +86,9 @@ const Home: React.FC = () => {
     []
   );
 
-  const workExperience2 = useMemo(
+  const allEducation = useMemo(
     () =>
-      sliceArray(workExperiences, 2).map((exp) => (
-        <CardExperience
-          key={exp.id}
-          title={exp.title}
-          duration={exp.duration}
-          description={exp.description}
-        />
-      )),
-    []
-  );
-
-  const education1 = useMemo(
-    () =>
-      sliceArray(education, 0, 2).map((edu) => (
+      education.map((edu) => (
         <CardEducation
           key={edu.id}
           title={edu.school}
@@ -112,35 +99,9 @@ const Home: React.FC = () => {
     []
   );
 
-  const education2 = useMemo(
+  const allOtherWorkExperiences = useMemo(
     () =>
-      sliceArray(education, 2).map((edu) => (
-        <CardEducation
-          key={edu.id}
-          title={edu.school}
-          duration={edu.duration}
-          details={edu.details}
-        />
-      )),
-    []
-  );
-
-  const otherworkExperience1 = useMemo(
-    () =>
-      sliceArray(otherExperiences, 0, 2).map((exp) => (
-        <CardExperience
-          key={exp.id}
-          title={exp.title}
-          duration={exp.duration}
-          description={exp.description}
-        />
-      )),
-    []
-  );
-
-  const otherworkExperience2 = useMemo(
-    () =>
-      sliceArray(otherExperiences, 2).map((exp) => (
+      otherExperiences.map((exp) => (
         <CardExperience
           key={exp.id}
           title={exp.title}
@@ -193,7 +154,9 @@ const Home: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="Home-picture"></div>
+        <div className="Home-picture">
+          <img src={Avatar} alt="Niclas Schæffer Profile" />
+        </div>
       </section>
 
       <section className="services">
@@ -209,10 +172,7 @@ const Home: React.FC = () => {
           <h2>Work Experience</h2>
           <div className="underline"></div>
         </div>
-        <div className="work-experience-row">
-          <div className="work-experience-col">{workExperience1}</div>
-          <div className="work-experience-col">{workExperience2}</div>
-        </div>
+        <div className="work-experience-grid">{allWorkExperiences}</div>
       </section>
 
       <section className="education">
@@ -220,10 +180,7 @@ const Home: React.FC = () => {
           <h2>Education</h2>
           <div className="underline"></div>
         </div>
-        <div className="education-row">
-          <div className="education-col">{education1}</div>
-          <div className="education-col">{education2}</div>
-        </div>
+        <div className="education-grid">{allEducation}</div>
       </section>
 
       <section className="other-work-experience">
@@ -231,10 +188,7 @@ const Home: React.FC = () => {
           <h2>Other Work Experience</h2>
           <div className="underline"></div>
         </div>
-        <div className="other-work-row">
-          <div className="other-work-col">{otherworkExperience1}</div>
-          <div className="other-work-col">{otherworkExperience2}</div>
-        </div>
+        <div className="other-work-grid">{allOtherWorkExperiences}</div>
       </section>
     </div>
   );

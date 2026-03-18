@@ -3,7 +3,7 @@
 .Contact {
   padding: $space-3xl;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: $space-3xl;
   z-index: 1;
 
@@ -36,8 +36,9 @@
 
 .information {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: $space-2xl;
+  width: 100%;
 
   .phone,
   .email,
@@ -98,15 +99,24 @@
     }
   }
 
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
   }
 }
 
 .getting-in-touch {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: $space-2xl;
+  width: 100%;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
 
   form {
     padding: $space-2xl;
@@ -229,13 +239,13 @@
         @include neon-glow($neon-cyan);
         padding: $space-md $space-xl;
         min-width: 180px;
-
-        &::before {
-          background: rgba($neon-cyan, 0.1);
-        }
+        background: rgba($neon-cyan, 0.05);
+        transition: all $transition-base;
 
         &:hover:not(:disabled) {
-          box-shadow: $glow-cyan;
+          background: rgba($neon-cyan, 0.15);
+          box-shadow: 0 0 20px rgba($neon-cyan, 0.8), inset 0 0 15px rgba($neon-cyan, 0.2);
+          transform: translateY(-2px);
         }
 
         &:disabled {
@@ -321,32 +331,19 @@
           justify-content: center;
           align-items: center;
           border: 2px solid $neon-lime;
-          background: transparent;
+          background: rgba($neon-lime, 0.05);
           color: $neon-lime;
           font-size: 1rem;
           transition: all $transition-base;
           box-shadow: inset 0 0 10px rgba($neon-lime, 0.2);
           position: relative;
 
-          &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba($neon-lime, 0.1);
-            transition: left $transition-base;
-            z-index: -1;
-          }
-
           &:hover {
-            &::before {
-              left: 0;
-            }
-
-            box-shadow: $glow-lime;
-            transform: scale(1.2);
+            background: rgba($neon-lime, 0.15);
+            border-color: $neon-cyan;
+            color: $neon-cyan;
+            box-shadow: 0 0 20px rgba($neon-lime, 0.8), inset 0 0 15px rgba($neon-cyan, 0.2);
+            transform: scale(1.15) translateY(-4px);
           }
         }
       }

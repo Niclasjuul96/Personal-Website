@@ -4,7 +4,7 @@ const workExperiences: Experience[] = [
   {
     id: 1,
     title: 'Developer at ITAGIL',
-    duration: '2025-present',
+    duration: 'March 2025-December 2025',
     description:
       'I have been working on different projects, and developing web hosting solutions for the customers, as well as web development.',
   },
