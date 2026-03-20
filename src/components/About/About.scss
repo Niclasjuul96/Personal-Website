@@ -10,7 +10,6 @@
 .heading {
   padding: $space-3xl;
   position: relative;
-  z-index: 1;
 
   h4 {
     font-size: 2rem;
@@ -38,7 +37,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $space-3xl;
-  z-index: 1;
 
   .Avatar {
     border: 2px solid $neon-magenta;
@@ -120,7 +118,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $space-3xl;
-  z-index: 1;
 
   .Frontend-backend,
   .tech-stack {

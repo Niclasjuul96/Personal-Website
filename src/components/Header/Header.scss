@@ -9,6 +9,8 @@
   transition: all $transition-base;
   position: relative;
   justify-content: center;
+  z-index: 10;
+  overflow: visible;
 
   @media (max-width: $breakpoint-md) {
     padding: $space-md $space-lg;
@@ -46,6 +48,8 @@
   @include flex-center;
   flex: 1;
   gap: $space-xl;
+  overflow: visible;
+  z-index: 10;
 
   #navbar {
     @include flex-center;
@@ -96,15 +100,16 @@
 
     &.active {
       display: flex;
-      position: absolute;
-      top: 100%;
+      position: fixed;
+      top: 75px;
       left: 0;
       right: 0;
+      width: 100%;
       background: rgba(26, 31, 58, 0.95);
       flex-direction: column;
       gap: 0;
       border: 1px solid rgba($neon-cyan, 0.3);
-      z-index: 999;
+      z-index: 11;
 
       #navbar {
         flex-direction: column;
@@ -127,7 +132,7 @@
 }
 
 .menu-icon {
-  display: none;
+  display: none !important;
   position: absolute;
   right: $space-3xl;
   @include flex-center;
@@ -146,7 +151,7 @@
   }
 
   @media (max-width: $breakpoint-md) {
-    display: flex;
+    display: flex !important;
   }
 }
 

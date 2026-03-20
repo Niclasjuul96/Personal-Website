@@ -5,7 +5,6 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: $space-3xl;
-  z-index: 1;
 
   .heading {
     grid-column: 1 / -1;
