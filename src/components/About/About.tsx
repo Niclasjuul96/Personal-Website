@@ -86,7 +86,7 @@ const About: React.FC = () => {
             <form
               method="get"
               target="_blank"
-              action="https://niclasjuul.dk/CV.pdf"
+              action="https://cv.niclasjuul.dk"
             >
               <button className="download-cv" type="submit">
                 Download CV
