@@ -1,3 +1,4 @@
+@use 'sass:map';
 /**
  * MODERN PORTFOLIO UI/UX REDESIGN
  * Design System & Global Styles
@@ -200,9 +201,9 @@ html {
 
   @font-face {
     font-family: 'mclarenregular';
-    src: url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff2')
+    src: url('/assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff2')
         format('woff2'),
-      url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff')
+      url('/assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff')
         format('woff');
     font-weight: normal;
     font-style: normal;
@@ -282,40 +283,40 @@ body {
    ======================================== */
 h1,
 .h1 {
-  font-size: map-get($heading-1, size);
-  font-weight: map-get($heading-1, weight);
-  line-height: map-get($heading-1, line-height);
+  font-size: map.get($heading-1, size);
+  font-weight: map.get($heading-1, weight);
+  line-height: map.get($heading-1, line-height);
   color: $neutral-main;
 }
 
 h2,
 .h2 {
-  font-size: map-get($heading-2, size);
-  font-weight: map-get($heading-2, weight);
-  line-height: map-get($heading-2, line-height);
+  font-size: map.get($heading-2, size);
+  font-weight: map.get($heading-2, weight);
+  line-height: map.get($heading-2, line-height);
   color: $neutral-main;
 }
 
 h3,
 .h3 {
-  font-size: map-get($heading-3, size);
-  font-weight: map-get($heading-3, weight);
-  line-height: map-get($heading-3, line-height);
+  font-size: map.get($heading-3, size);
+  font-weight: map.get($heading-3, weight);
+  line-height: map.get($heading-3, line-height);
   color: $neutral-main;
 }
 
 p {
-  font-size: map-get($body-regular, size);
-  line-height: map-get($body-regular, line-height);
+  font-size: map.get($body-regular, size);
+  line-height: map.get($body-regular, line-height);
   color: $neutral-main;
 
   &.lead {
-    font-size: map-get($body-large, size);
+    font-size: map.get($body-large, size);
     color: $neutral-main;
   }
 
   &.small {
-    font-size: map-get($body-small, size);
+    font-size: map.get($body-small, size);
     color: darken($neutral-main, 10%);
   }
 }
@@ -363,12 +364,12 @@ p {
 
   &.btn-sm {
     padding: $space-sm $space-md;
-    font-size: map-get($body-small, size);
+    font-size: map.get($body-small, size);
   }
 
   &.btn-lg {
     padding: $space-lg $space-2xl;
-    font-size: map-get($body-large, size);
+    font-size: map.get($body-large, size);
   }
 }
 
@@ -399,7 +400,7 @@ input,
 textarea,
 select {
   font-family: $font-primary;
-  font-size: map-get($body-regular, size);
+  font-size: map.get($body-regular, size);
   color: $neutral-main;
   border: 1px solid $neutral-border;
   border-radius: $radius-md;

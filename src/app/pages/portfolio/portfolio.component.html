@@ -1,0 +1,62 @@
+﻿<div class="Portfolio">
+  <section class="heading">
+    <div class="title">
+      <h4>Portfolio</h4>
+      <div class="underline"></div>
+    </div>
+  </section>
+
+  <section class="subheading">
+    <div class="subtitle">What Services You Will Get From Me</div>
+    <div class="description">
+      Here is a list over my last projects, so you can have a sneak peek and
+      see. You can click on the projects and it will direct you to the
+      project. Feel free to contact me for more information about the
+      projects.
+    </div>
+    <div class="underline"></div>
+  </section>
+
+  <section class="projects-grid">
+    <div class="project-box" *ngFor="let project of projects" (click)="openModal(project)">
+      <img [src]="project.imgURL" [alt]="project.title" class="project-image" />
+    </div>
+  </section>
+
+  <div class="modal-wrapper" *ngIf="isModalOpen && selectedProject" (click)="closeModal()" role="dialog" aria-modal="true">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="content">
+        <span class="close" (click)="closeModal()" role="button" tabindex="0" aria-label="Close modal">
+          &times;
+        </span>
+        <img class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
+        <h2 class="title">{{ selectedProject.title }}</h2>
+        <p class="detail">{{ selectedProject.detail }}</p>
+        
+        <div class="accounts" *ngIf="selectedProject.accounts && selectedProject.accounts.length > 0">
+          <p><strong>Demo Accounts:</strong></p>
+          <ul>
+            <li *ngFor="let account of selectedProject.accounts">{{ account }}</li>
+          </ul>
+        </div>
+        
+        <p class="techstack">
+          <strong>TechStack used:</strong> {{ selectedProject.tech.join(', ') }}
+        </p>
+        
+        <div class="btns">
+          <button 
+            class="livepreview" 
+            [class.disabled]="!selectedProject.livepreviewurl"
+            (click)="openLivePreview()"
+            [disabled]="!selectedProject.livepreviewurl">
+            Live Preview
+          </button>
+          <button class="Github" (click)="openGithub()">
+            Github Repository
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

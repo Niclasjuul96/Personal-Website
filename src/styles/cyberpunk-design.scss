@@ -1,3 +1,4 @@
+@use 'sass:map';
 /**
  * CYBERPUNK PORTFOLIO REDESIGN - DESIGN SYSTEM V2
  * Bold, Modern, Tech-Focused Aesthetic
@@ -227,9 +228,9 @@ html {
 
   @font-face {
     font-family: 'mclarenregular';
-    src: url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff2')
+    src: url('/assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff2')
         format('woff2'),
-      url('./assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff')
+      url('/assets/webfontkit-20230828-052518/mclaren-regular-webfont.woff')
         format('woff');
     font-weight: normal;
     font-style: normal;
@@ -323,26 +324,26 @@ body {
    ======================================== */
 h1,
 .h1 {
-  font-size: map-get($heading-1, size);
-  font-weight: map-get($heading-1, weight);
-  letter-spacing: map-get($heading-1, letter-spacing);
+  font-size: map.get($heading-1, size);
+  font-weight: map.get($heading-1, weight);
+  letter-spacing: map.get($heading-1, letter-spacing);
   color: $text-primary;
   font-family: $font-accent;
 }
 
 h2,
 .h2 {
-  font-size: map-get($heading-2, size);
-  font-weight: map-get($heading-2, weight);
-  letter-spacing: map-get($heading-2, letter-spacing);
+  font-size: map.get($heading-2, size);
+  font-weight: map.get($heading-2, weight);
+  letter-spacing: map.get($heading-2, letter-spacing);
   color: $text-primary;
   font-family: $font-accent;
 }
 
 h3,
 .h3 {
-  font-size: map-get($heading-3, size);
-  font-weight: map-get($heading-3, weight);
+  font-size: map.get($heading-3, size);
+  font-weight: map.get($heading-3, weight);
   color: $text-primary;
   font-family: $font-accent;
 }
@@ -352,7 +353,7 @@ p {
   line-height: 1.8;
 
   &.lead {
-    font-size: map-get($body-large, size);
+    font-size: map.get($body-large, size);
     color: $text-primary;
   }
 }

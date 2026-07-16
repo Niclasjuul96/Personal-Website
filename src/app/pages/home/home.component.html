@@ -1,0 +1,94 @@
+﻿<div class="Home">
+
+  <section class="introduction">
+    <div class="Home-who">
+      <div class="Home-title">
+        I&apos;m Web Developer Niclas Sch&aelig;ffer
+      </div>
+      <div class="Home-subtext">
+        A passionate Fullstack Web Developer based in Roskilde. Fast learner and ready for some challenges.
+      </div>
+      <div class="Links">
+        <ul class="link-list-item">
+          <li>
+            <a href="https://www.linkedin.com/in/niclas-juul-schaeffer/" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Niclasjuul96" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-github"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.facebook.com/profile.php?id=1119953702" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-facebook"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="Home-picture">
+      <img src="assets/ProfilePictureJuul.png" alt="Niclas Sch&aelig;ffer Profile" />
+    </div>
+  </section>
+
+  <section class="services">
+    <div class="Services-heading">
+      <h2>Services</h2>
+      <div class="underline"></div>
+    </div>
+    <div class="services-content">
+      <div class="card-service" *ngFor="let service of services">
+        <img [src]="service.img" [alt]="service.name" />
+        <div class="card-title">{{ service.name }}</div>
+        <div class="card-description">{{ service.description }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="work-experience">
+    <div class="work-experience-heading">
+      <h2>Work Experience</h2>
+      <div class="underline"></div>
+    </div>
+    <div class="work-experience-grid">
+      <div class="card-experience" *ngFor="let exp of workExperiences">
+        <div class="card-title">{{ exp.title }}</div>
+        <div class="card-duration">{{ exp.duration }}</div>
+        <div class="card-description">{{ exp.description }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="education">
+    <div class="education-heading">
+      <h2>Education</h2>
+      <div class="underline"></div>
+    </div>
+    <div class="education-grid">
+      <div class="card-experience" *ngFor="let edu of education">
+        <div class="card-title">{{ edu.school }}</div>
+        <div class="card-duration">{{ edu.duration }}</div>
+        <ul class="subjects-list" *ngIf="edu.details">
+          <li *ngFor="let subject of getSubjects(edu.details!)">{{ subject }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="other-work-experience">
+    <div class="other-work-heading">
+      <h2>Other Work Experience</h2>
+      <div class="underline"></div>
+    </div>
+    <div class="other-work-grid">
+      <div class="card-experience" *ngFor="let exp of otherExperiences">
+        <div class="card-title">{{ exp.title }}</div>
+        <div class="card-duration">{{ exp.duration }}</div>
+        <div class="card-description">{{ exp.description }}</div>
+      </div>
+    </div>
+  </section>
+
+</div>

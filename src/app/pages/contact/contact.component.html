@@ -1,0 +1,157 @@
+<div class="Contact">
+  <section class="heading">
+    <div class="title">
+      <h4>Contact</h4>
+      <div class="underline"></div>
+    </div>
+  </section>
+
+  <section class="subheading">
+    <div class="subtitle">Get In Touch</div>
+    <div class="description">
+      Feel free to reach out to me for any inquiries, collaboration opportunities,
+      or just to say hello. I'll get back to you as soon as possible.
+    </div>
+    <div class="underline"></div>
+  </section>
+
+  <section class="information">
+    <div class="phone">
+      <div class="icon">
+        <i class="fa fa-mobile" aria-hidden="true"></i>
+      </div>
+      <div class="heading">+45 22207812</div>
+      <div class="description">Available on workdays</div>
+    </div>
+    <div class="email">
+      <div class="icon">
+        <i class="fa fa-envelope" aria-hidden="true"></i>
+      </div>
+      <div class="heading">Niclasschaeffer96&#64;gmail.com</div>
+      <div class="description">Send me an email, and let's talk</div>
+    </div>
+    <div class="city">
+      <div class="icon">
+        <i class="fa fa-home" aria-hidden="true"></i>
+      </div>
+      <div class="heading">Roskilde, Denmark</div>
+      <div class="description">Specifically in Trekroner</div>
+    </div>
+  </section>
+
+  <section class="getting-in-touch">
+    <form (ngSubmit)="onSubmit($any($event.target), $event)">
+      <div class="greeting">Send me a message</div>
+      
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Your Name"
+          [class.is-invalid]="errors['name']"
+          (ngChange)="clearError('name')"
+          required
+        />
+        <div class="error-message" *ngIf="errors['name']">
+          {{ errors['name'] }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="your.email@example.com"
+          [class.is-invalid]="errors['email']"
+          (ngChange)="clearError('email')"
+          required
+        />
+        <div class="error-message" *ngIf="errors['email']">
+          {{ errors['email'] }}
+        </div>
+      </div>
+
+      <div class="form-group-message">
+        <label for="message">Message</label>
+        <textarea
+          id="message"
+          [(ngModel)]="message"
+          name="message"
+          placeholder="Your message here..."
+          [class.is-invalid]="errors['message']"
+          (ngChange)="clearError('message')"
+          required
+        ></textarea>
+        <div class="error-message" *ngIf="errors['message']">
+          {{ errors['message'] }}
+        </div>
+      </div>
+
+      <div class="form-last">
+        <div class="remaining">
+          <p>I will get back to you as soon as possible</p>
+        </div>
+        <button type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+        </button>
+      </div>
+
+      <div class="status-message" *ngIf="submitStatus !== 'idle'" [class.success]="submitStatus === 'success'" [class.error]="submitStatus === 'error'">
+        {{ submitMessage }}
+      </div>
+    </form>
+
+    <div class="message-me">
+      <div class="heading">Message Me</div>
+      <div class="underline"></div>
+      <div class="content">
+        Wanna get in touch or talk about a project? Feel free to contact me
+        via email or drop a line in the form. I endeavour to respond to all
+        enquiries within 1 working day. I look forward to hearing from you,
+        whether it's for collaboration or project idea.
+      </div>
+      <div class="links">
+        <ul class="icon-list-item">
+          <li>
+            <a
+              href="https://www.linkedin.com/in/niclas-juul-schaeffer/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/Niclasjuul96"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fab fa-github"></i>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.facebook.com/profile.php?id=1119953702"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fab fa-facebook"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="success-message" *ngIf="submitted && submitStatus === 'success'">
+      <i class="fas fa-check-circle"></i>
+      <p>{{ submitMessage }}</p>
+    </div>
+  </section>
+</div>

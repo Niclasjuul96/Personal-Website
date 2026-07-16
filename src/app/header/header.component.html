@@ -1,0 +1,24 @@
+<div class="Header-container">
+  <div class="logo" (click)="handleLogoClick()">
+    <img src="../../assets/logo.png" id="logo" alt="Logo" />
+  </div>
+  <div class="menu-icon" (click)="handleMenuClick()">
+    <i [class]="isMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+  </div>
+  <nav [class]="isMenuOpen ? 'navbar active' : 'navbar'">
+    <ul id="navbar">
+      <li>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="handleNavLinkClick()">Home</a>
+      </li>
+      <li>
+        <a routerLink="/about" routerLinkActive="active" (click)="handleNavLinkClick()">About</a>
+      </li>
+      <li>
+        <a routerLink="/portfolio" routerLinkActive="active" (click)="handleNavLinkClick()">Portfolio</a>
+      </li>
+      <li>
+        <a routerLink="/contact" routerLinkActive="active" (click)="handleNavLinkClick()">Contact</a>
+      </li>
+    </ul>
+  </nav>
+</div>
