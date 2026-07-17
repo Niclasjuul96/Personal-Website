@@ -14,7 +14,7 @@ export class PortfolioComponent implements OnInit {
   isModalOpen = false;
 
   ngOnInit(): void {
-    document.title = 'Portfolio | Niclas Sch&aelig;ffer Portfolio';
+    document.title = 'Portfolio | Niclas Schæffer Portfolio';
   }
 
   openModal(project: Project): void {

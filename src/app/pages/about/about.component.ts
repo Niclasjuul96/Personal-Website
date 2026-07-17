@@ -12,6 +12,6 @@ export class AboutComponent implements OnInit {
   techstack: Technology[] = techstack;
 
   ngOnInit(): void {
-    document.title = 'About | Niclas Sch&aelig;ffer Portfolio';
+    document.title = 'About | Niclas Schæffer Portfolio';
   }
 }

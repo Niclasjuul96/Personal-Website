@@ -37,7 +37,7 @@ export class ContactComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    document.title = 'Contact | Niclas Sch&aelig;ffer Portfolio';
+    document.title = 'Contact | Niclas Schæffer Portfolio';
   }
 
   clearError(fieldName: string): void {

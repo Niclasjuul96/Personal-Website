@@ -226,7 +226,7 @@ export class CvComponent implements OnInit, OnDestroy {
 
   private updateDocumentTitle(): void {
     const roleTitle = this.roleContent.title;
-    document.title = `${roleTitle} CV | Niclas Schaeffer Portfolio`;
+    document.title = `${roleTitle} CV | Niclas Schæffer Portfolio`;
   }
 
   private loadPreferences(): void {
