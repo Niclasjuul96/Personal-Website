@@ -1,1 +1,45 @@
 @use './styles/cyberpunk-design' as *;
+
+@media print {
+	body.cv-print-mode,
+	html.cv-print-mode {
+		background: #fff !important;
+		color: #111 !important;
+	}
+
+	body.cv-print-mode {
+		font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+		width: 21cm;
+		margin: 0 auto;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	body.cv-print-mode .App {
+		background: #fff !important;
+		min-height: auto;
+	}
+
+	body.cv-print-mode .App::before {
+		content: none !important;
+		display: none !important;
+	}
+
+	body.cv-print-mode app-header {
+		display: none !important;
+	}
+
+	body.cv-print-mode .body {
+		padding: 0 !important;
+		gap: 0 !important;
+		display: block;
+	}
+
+	body.cv-print-mode .body > * {
+		display: none !important;
+	}
+
+	body.cv-print-mode .body > app-cv {
+		display: block !important;
+	}
+}

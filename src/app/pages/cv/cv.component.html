@@ -1,0 +1,170 @@
+<div class="Cv">
+  <section class="heading">
+    <div class="title">
+      <h4>Curriculum Vitae</h4>
+      <div class="underline"></div>
+    </div>
+
+    <div class="controls">
+      <div class="toggle-group" aria-label="Language selection">
+        <button
+          type="button"
+          *ngFor="let option of languageOptions"
+          [class.active]="lang === option.code"
+          (click)="switchLanguage(option.code)"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+
+      <div class="toggle-group" aria-label="Role selection">
+        <button
+          type="button"
+          *ngFor="let option of roleOptions"
+          [class.active]="role === option.key"
+          (click)="switchRole(option.key)"
+        >
+          {{ getRoleLabelText(option) }}
+        </button>
+      </div>
+
+      <div class="print-tools">
+        <button type="button" class="export-toggle" (click)="togglePrintOptions()">
+          {{ isPrintOptionsOpen ? 'Close Export' : 'Export PDF' }}
+        </button>
+
+        <div class="print-panel" *ngIf="isPrintOptionsOpen">
+          <div class="preset-list">
+            <button
+              type="button"
+              *ngFor="let preset of exportPresets"
+              class="preset"
+              [class.active]="preset.lang === lang && preset.role === role"
+              (click)="applyPreset(preset)"
+            >
+              <span>{{ preset.label }}</span>
+              <small>{{ getFilenameForPreset(preset) }}</small>
+            </button>
+          </div>
+
+          <div class="export-actions">
+            <div class="file-preview">{{ currentFilename }}</div>
+            <button type="button" (click)="copyFilename()">{{ copied ? 'Copied' : 'Copy Filename' }}</button>
+            <button type="button" (click)="printCurrentSelection()">Print Current Selection</button>
+            <p class="export-help">{{ getPrintHelpText() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile">
+    <div class="identity">
+      <h1>{{ profile.name }} {{ profile.lastName }}</h1>
+      <p class="role">{{ roleContent.title }}</p>
+      <p class="quote">{{ getTranslated(roleContent.quote) }}</p>
+    </div>
+
+    <div class="contact-grid">
+      <a [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+      <a [href]="'tel:' + profile.phone.replaceAll(' ', '')">{{ profile.phone }}</a>
+      <a [href]="profile.webpage" target="_blank" rel="noopener noreferrer" data-print-label="Personal Website">Personal Website</a>
+      <a [href]="profile.linkedin" target="_blank" rel="noopener noreferrer" data-print-label="LinkedIn">LinkedIn</a>
+      <a [href]="profile.github" target="_blank" rel="noopener noreferrer" data-print-label="GitHub">GitHub</a>
+      <span>License: {{ profile.license }}</span>
+    </div>
+  </section>
+
+  <section class="about">
+    <h2>{{ sectionLabels.summary[lang] }}</h2>
+    <p>{{ getTranslated(roleContent.info) }}</p>
+  </section>
+
+  <section class="about">
+    <h2>{{ sectionLabels.skillProfile[lang] }}</h2>
+    <p>{{ getTranslated(roleContent.skillInfo) }}</p>
+  </section>
+
+  <section class="experience">
+    <h2>
+      {{ role === 'general' ? sectionLabels.combinedExperience[lang] : sectionLabels.workExperience[lang] }}
+    </h2>
+    <div class="cards">
+      <article class="card" *ngFor="let item of getExperienceForCurrentRole(); let i = index" [style.--stagger-index]="i">
+        <div class="meta-row">
+          <span class="badge" [class.work]="item.isWorkExperience" [class.other]="!item.isWorkExperience">
+            {{ item.isWorkExperience ? sectionLabels.workBadge[lang] : sectionLabels.otherBadge[lang] }}
+          </span>
+          <span class="position">{{ getRoleLabel(i) }}</span>
+        </div>
+
+        <h3>{{ item.label }}</h3>
+
+        <div class="date-lines">
+          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
+        </div>
+
+        <p>{{ getTranslated(item.description) }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="experience" *ngIf="role !== 'general'">
+    <h2>{{ sectionLabels.otherExperience[lang] }}</h2>
+    <div class="cards">
+      <article class="card" *ngFor="let item of getOtherExperienceForCurrentRole(); let i = index" [style.--stagger-index]="i">
+        <div class="meta-row">
+          <span class="badge other">{{ sectionLabels.otherBadge[lang] }}</span>
+          <span class="position">{{ getRoleLabel(i) }}</span>
+        </div>
+
+        <h3>{{ item.label }}</h3>
+
+        <div class="date-lines">
+          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
+        </div>
+
+        <p>{{ getTranslated(item.description) }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="education">
+    <h2>{{ sectionLabels.education[lang] }}</h2>
+    <div class="cards">
+      <article class="card" *ngFor="let item of profile.education; let i = index" [style.--stagger-index]="i">
+        <h3>{{ getEducationTitle(item) }}</h3>
+
+        <div class="date-lines">
+          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
+        </div>
+
+        <p>{{ getTranslated(item.description) }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="skills">
+    <h2>{{ sectionLabels.softSkills[lang] }}</h2>
+    <div class="cards compact">
+      <article class="card" *ngFor="let item of profile.softSkills; let i = index" [style.--stagger-index]="i">
+        <h3>{{ getTranslated(item.name) }}</h3>
+        <p>{{ getTranslated(item.text) }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="footer-info">
+    <div>
+      <h2>{{ sectionLabels.languageSkills[lang] }}</h2>
+      <ul>
+        <li *ngFor="let item of profile.spokenLanguages">{{ getTranslated(item) }}</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>{{ sectionLabels.spareTime[lang] }}</h2>
+      <p>{{ getTranslated(profile.spareTime) }}</p>
+    </div>
+  </section>
+</div>
