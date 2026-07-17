@@ -61,6 +61,7 @@
     font-size: 0.82rem;
 
     &:hover {
+      @include no-jump-hover($neon-cyan, 0.1);
       border-color: $neon-cyan;
       color: $text-primary;
     }
@@ -88,6 +89,7 @@
   font-size: 0.82rem;
 
   &:hover {
+    @include no-jump-hover($neon-lime, 0.1);
     box-shadow: 0 0 14px rgba($neon-lime, 0.35);
   }
 }
@@ -174,9 +176,9 @@
 .footer-info {
   margin: 0 $space-3xl;
   padding: $space-xl;
-  border: 1px solid rgba($neon-cyan, 0.2);
-  background: rgba($dark-panel, 0.7);
-  box-shadow: inset 0 0 20px rgba($neon-cyan, 0.05);
+  @include shared-glass-box(rgba($neon-cyan, 0.48), $neon-cyan, 0.64);
+  border-top: 2px solid rgba($neon-magenta, 0.58) !important;
+  border-left: 3px solid rgba($neon-cyan, 0.72) !important;
 }
 
 .identity {
@@ -218,6 +220,7 @@
   }
 
   a:hover {
+    @include no-jump-hover($neon-cyan, 0.1);
     color: $text-primary;
     border-color: $neon-cyan;
     box-shadow: 0 0 14px rgba($neon-cyan, 0.3);
@@ -242,8 +245,9 @@ h2 {
 }
 
 .card {
-  border: 1px solid rgba($neon-cyan, 0.25);
-  background: rgba($dark-bg-secondary, 0.65);
+  @include shared-glass-box(rgba($neon-cyan, 0.45), $neon-cyan, 0.62);
+  border-top: 2px solid rgba($neon-magenta, 0.5) !important;
+  border-left: 3px solid rgba($neon-cyan, 0.7) !important;
   padding: $space-lg;
   display: flex;
   flex-direction: column;
@@ -449,9 +453,11 @@ h2 {
   .footer-info {
     margin: 0;
     padding: 0;
-    border: 0;
-    box-shadow: none;
-    background: #fff;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     color: #1a1a2e;
     break-inside: avoid;
     page-break-inside: avoid;
@@ -517,9 +523,10 @@ h2 {
 
   .card {
     animation: none;
-    border: 0;
-    border-left: 0.8mm solid #e2e8f0;
-    background: #fff;
+    border: 0 !important;
+    border-left: 0.8mm solid #e2e8f0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
     padding: 2.2mm 0 2.2mm 3.2mm;
     break-inside: avoid;
     page-break-inside: avoid;
@@ -579,8 +586,8 @@ h2 {
   }
 
   .about {
-    border-left: 0.9mm solid #003d82;
-    background: linear-gradient(135deg, rgba(0, 61, 130, 0.03), rgba(0, 212, 170, 0.03));
+    border-left: 0.9mm solid #003d82 !important;
+    background: linear-gradient(135deg, rgba(0, 61, 130, 0.03), rgba(0, 212, 170, 0.03)) !important;
     border-radius: 1.2mm;
     padding: 2.8mm 3.2mm;
   }

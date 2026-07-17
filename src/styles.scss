@@ -1,5 +1,30 @@
 @use './styles/cyberpunk-design' as *;
 
+.reveal-on-scroll {
+	opacity: 0;
+	transform: translateY(18px);
+	filter: blur(1.5px);
+	transition: opacity 560ms ease, transform 560ms ease, filter 560ms ease;
+	transition-delay: var(--reveal-delay, 0ms);
+	will-change: opacity, transform, filter;
+}
+
+.reveal-on-scroll.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+	filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reveal-on-scroll,
+	.reveal-on-scroll.is-visible {
+		opacity: 1;
+		transform: none;
+		filter: none;
+		transition: none;
+	}
+}
+
 @media print {
 	body.cv-print-mode,
 	html.cv-print-mode {
