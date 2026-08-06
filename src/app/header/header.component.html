@@ -36,6 +36,17 @@
           <img [src]="picture" alt="Profile" class="user-avatar" />
         }
         <span class="user-name">{{ userName | async }}</span>
+        @if (isAllowed | async) {
+          <span
+            class="access-badge"
+            title="This account has access to private tools on this site, like the Dashboard."
+          >Access granted</span>
+        } @else {
+          <span
+            class="no-access-badge"
+            title="This login unlocks private tools (like a personal dashboard) for select accounts. This account isn't one of them, but thanks for signing in!"
+          >No access</span>
+        }
         <button class="btn logout-btn" (click)="handleLogoutClick()">
           <i class="fas fa-sign-out-alt"></i>
           <span class="btn-text">Log out</span>

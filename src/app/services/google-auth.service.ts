@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ALLOWED_EMAILS, GOOGLE_CONFIG } from '../constants/google-config';
@@ -46,7 +46,7 @@ export class GoogleAuthService {
   /** True only when the logged-in Google account is in ALLOWED_EMAILS. */
   isAllowed = this.userEmail$.pipe(map((email) => isEmailAllowed(email)));
 
-  constructor() {
+  constructor(private ngZone: NgZone) {
     // Restoring a previous session is pure localStorage reading, so it
     // doesn't need to wait on the Google SDK (only login()/logout() do).
     this.checkStoredToken();
@@ -143,7 +143,9 @@ export class GoogleAuthService {
   logout(): void {
     const token = localStorage.getItem(STORAGE_KEYS.accessToken);
     if (token && window.google?.accounts?.oauth2) {
-      window.google.accounts.oauth2.revoke(token, () => this.clearSession());
+      // revoke()'s callback is another Google SDK callback outside
+      // Angular's zone — same reasoning as handleTokenResponse.
+      window.google.accounts.oauth2.revoke(token, () => this.ngZone.run(() => this.clearSession()));
     } else {
       this.clearSession();
     }
@@ -190,7 +192,12 @@ export class GoogleAuthService {
     localStorage.setItem(STORAGE_KEYS.accessToken, accessToken);
     localStorage.setItem(STORAGE_KEYS.expiresAt, expiresAt.toString());
 
-    this.isAuthenticated$.next(true);
+    // Google's SDK invokes this callback outside Angular's zone (it's
+    // triggered by the popup window, not a zone-patched browser API), so
+    // BehaviorSubject updates here wouldn't trigger change detection —
+    // the view would only catch up on the next unrelated render (e.g. a
+    // manual refresh) without this.
+    this.ngZone.run(() => this.isAuthenticated$.next(true));
     this.fetchUserInfo(accessToken);
   }
 
@@ -213,9 +220,14 @@ export class GoogleAuthService {
         const picture = data.picture || null;
         const email = data.email || null;
 
-        this.userName$.next(fullName);
-        this.userPicture$.next(picture);
-        this.userEmail$.next(email);
+        // Same reasoning as above: this chains off the token callback's
+        // zone, so force it back into Angular's zone explicitly rather
+        // than assuming it propagated.
+        this.ngZone.run(() => {
+          this.userName$.next(fullName);
+          this.userPicture$.next(picture);
+          this.userEmail$.next(email);
+        });
         localStorage.setItem(STORAGE_KEYS.userName, fullName);
         if (picture) {
           localStorage.setItem(STORAGE_KEYS.userPicture, picture);

@@ -215,6 +215,37 @@
   }
 }
 
+.no-access-badge,
+.access-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  box-sizing: border-box;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0 $space-sm;
+  cursor: help;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.no-access-badge {
+  border: 1px solid rgba($neon-magenta, 0.5);
+  color: $neon-magenta;
+  background: rgba($neon-magenta, 0.08);
+}
+
+.access-badge {
+  border: 1px solid rgba($neon-lime, 0.5);
+  color: $neon-lime;
+  background: rgba($neon-lime, 0.08);
+}
+
 .login-btn,
 .logout-btn {
   display: flex !important;
@@ -245,7 +276,9 @@
 }
 
 .logout-btn {
-  padding: $space-xs $space-md;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 0 $space-md;
   font-size: 0.7rem;
 
   @media (max-width: $breakpoint-md) {
