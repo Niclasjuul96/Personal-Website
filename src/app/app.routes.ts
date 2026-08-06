@@ -4,6 +4,8 @@ import { AboutComponent } from './pages/about/about.component';
 import { PortfolioComponent } from './pages/portfolio/portfolio.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { CvComponent } from './pages/cv/cv.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { allowedGuard } from './guards/allowed.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,5 +13,6 @@ export const routes: Routes = [
   { path: 'portfolio', component: PortfolioComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'cv', component: CvComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [allowedGuard] },
   { path: '**', redirectTo: '' }
 ];

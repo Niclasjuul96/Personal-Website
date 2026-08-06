@@ -1,0 +1,18 @@
+<div class="Dashboard">
+  <div class="heading">
+    <h4>Dashboard</h4>
+    <div class="underline"></div>
+    <p class="welcome">Welcome back{{ (userName | async) ? ', ' + (userName | async) : '' }}.</p>
+  </div>
+
+  <section class="apps-grid">
+    <div class="app-card disabled">
+      <div class="app-icon"><i class="fas fa-wallet"></i></div>
+      <div class="app-name">E-conomic</div>
+      <p class="app-description">
+        Your personal budget tracker. Not connected to the site yet &mdash; coming once the two projects are merged.
+      </p>
+      <span class="status-badge">Coming soon</span>
+    </div>
+  </section>
+</div>
