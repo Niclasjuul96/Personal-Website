@@ -473,7 +473,7 @@ export const siteProjects: SiteProject[] = [
     title: 'Password Generator',
     imgURL: 'assets/project-images/password.png',
     detail: 'Password generator is a small and simple tool to generate password that includes what ever you like. to solve solve one of the hardest stuff in life, finding a password to use. and ofc the copy to clipboard doesn\'t work on the website cause it\'s not possible. but iif you download the project from github, you will be able to use that feature aswell.',
-    githuburl: 'https://github.com/Niclasjuul96/PasswordGenerator/tree/main',
+    githuburl: 'https://github.com/Niclasjuul96/PasswordGenerator/',
     livepreviewurl: 'http://passwordgenerator.niclasjuul.dk/',
     tech: ['html', 'CSS', 'JavaScript']
   },

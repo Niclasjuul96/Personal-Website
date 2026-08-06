@@ -179,3 +179,76 @@
     font-size: 0.85rem;
   }
 }
+
+.auth-area {
+  position: absolute;
+  right: $space-3xl;
+  @include flex-center;
+  z-index: 10;
+
+  @media (max-width: $breakpoint-md) {
+    right: calc(#{$space-3xl} + 3rem);
+  }
+}
+
+.user-badge {
+  @include flex-center;
+  gap: $space-md;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid $neon-cyan;
+  box-shadow: 0 0 8px rgba($neon-cyan, 0.6);
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text-primary;
+  letter-spacing: 0.5px;
+
+  @media (max-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.login-btn,
+.logout-btn {
+  display: flex !important;
+  @include cyber-button;
+  @include neon-border($neon-cyan);
+  @include neon-glow($neon-cyan);
+  align-items: center;
+  gap: $space-sm;
+  font-size: 0.8rem;
+  padding: $space-sm $space-lg;
+
+  &::before {
+    background: rgba($neon-cyan, 0.1);
+  }
+
+  &:hover {
+    @include no-jump-hover($neon-cyan, 0.12);
+    box-shadow: $glow-cyan;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-sm;
+
+    .btn-text {
+      display: none;
+    }
+  }
+}
+
+.logout-btn {
+  padding: $space-xs $space-md;
+  font-size: 0.7rem;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-sm;
+  }
+}

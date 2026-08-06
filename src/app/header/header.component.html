@@ -22,6 +22,30 @@
       <li>
         <a routerLink="/contact" routerLinkActive="active" (click)="handleNavLinkClick()">Contact</a>
       </li>
+      @if (isAllowed | async) {
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active" (click)="handleNavLinkClick()">Dashboard</a>
+        </li>
+      }
     </ul>
   </nav>
+  <div class="auth-area">
+    @if (isAuthenticated | async) {
+      <div class="user-badge">
+        @if (userPicture | async; as picture) {
+          <img [src]="picture" alt="Profile" class="user-avatar" />
+        }
+        <span class="user-name">{{ userName | async }}</span>
+        <button class="btn logout-btn" (click)="handleLogoutClick()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="btn-text">Log out</span>
+        </button>
+      </div>
+    } @else {
+      <button class="btn login-btn" (click)="handleLoginClick()">
+        <i class="fab fa-google"></i>
+        <span class="btn-text">Sign in with Google</span>
+      </button>
+    }
+  </div>
 </div>
