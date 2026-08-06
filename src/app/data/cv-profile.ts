@@ -60,9 +60,6 @@ export interface CvProfile {
   webpage: string;
   linkedin: string;
   github: string;
-  quote: LocalizedText;
-  info: LocalizedText;
-  skillInfo: LocalizedText;
   softSkills: CvSoftSkill[];
   workExperience: CvWorkExperienceItem[];
   education: CvEducationItem[];
@@ -77,94 +74,61 @@ export const cvProfile: CvProfile = {
   id: 0,
   name: 'Niclas',
   lastName: 'Juul Schæffer',
-  title: { en: 'IT Specialist – Development & Support' },
-  title2: { en: 'Pragmatic, people-focused problem solver' },
+  title: { en: 'IT Support Specialist | Service Desk | 1st & 2nd Line' },
+  title2: { en: 'Calm, service-minded and structured under pressure' },
   phone: '+45 22 20 78 12',
   email: 'Niclasschaeffer96@gmail.com',
   license: 'AM, B',
   webpage: 'https://niclasjuul.dk',
   linkedin: 'https://www.linkedin.com/in/niclas-juul-schaeffer/',
   github: 'https://github.com/Niclasjuul96',
-  quote: {
-    en: 'Service-minded IT supporter who takes ownership, solves issues thoroughly and makes technology feel simple.',
-    da: 'Serviceminded IT-supporter, der tager ansvar, løser problemer grundigt og gør teknologi enkel for brugeren.'
-  },
-  info: {
-    en:
-      'IT supporter with experience in both 1st and 2nd level support and technical problem-solving. ' +
-      'I work structured and take ownership of cases from first contact to final resolution. ' +
-      'With a background in both IT and customer-facing roles, I am used to explaining technical issues ' +
-      'in a clear and calm way, even when things are busy. My technical foundation in systems and development ' +
-      'gives me a strong understanding of how solutions are built, but my focus is always on creating a smooth ' +
-      'and reliable experience for the end user.',
-    da:
-      'IT-supporter med erfaring inden for både 1st og 2nd level support og teknisk fejlfinding. ' +
-      'Jeg arbejder struktureret og tager ansvar for mine sager fra første henvendelse til endelig løsning. ' +
-      'Med baggrund i både IT og kundevendte roller er jeg vant til at forklare tekniske problemstillinger ' +
-      'klart og roligt, også når der er travlt. Min tekniske forståelse giver mig et solidt fundament, ' +
-      'men mit fokus er altid at skabe en stabil og tryg oplevelse for brugeren.'
-  },
-  skillInfo: {
-    en:
-      'As you explore my profile, you\'ll see a broad IT skill set that combines software development, support and operations. ' +
-      'I build scalable backend solutions with ASP.NET, C# and SQL Server and create intuitive frontend interfaces with React, ' +
-      'JavaScript, HTML and CSS. I also work with WordPress, custom themes and extensions, and use XML and XSLT for data ' +
-      'transformation and system integration. From debugging incidents and supporting end users to implementing new features, ' +
-      'I focus on maintainable, efficient solutions that solve real business and day-to-day challenges.',
-    da:
-      'Når du udforsker min profil, vil du se et bredt IT-kompetencesæt, der kombinerer softwareudvikling, support og drift. ' +
-      'Jeg bygger skalerbare backend-løsninger med ASP.NET, C# og SQL Server og skaber intuitive frontend-grænseflader med ' +
-      'React, JavaScript, HTML og CSS. Jeg arbejder også med WordPress, skræddersyede temaer og udvidelser samt XML og XSLT ' +
-      'til datatransformation og systemintegration. Fra fejlsøgning og bruger-support til implementering af nye funktioner ' +
-      'har jeg fokus på vedligeholdelige, effektive løsninger, der løser både forretningsmæssige og dagligdags behov.'
-  },
   softSkills: [
     {
-      name: { en: 'People-centred coordination (ESFJ-T)', da: 'Menneskecentreret koordinering (ESFJ-T)' },
+      name: { en: 'User-centric service & empathy', da: 'Brugercentreret service & empati' },
       level: 5,
       text: {
-        en: 'Warm, inclusive facilitation that builds trust and momentum. Everyone is heard, morale is protected, and collaboration stays smooth.',
-        da: 'Varm, inkluderende facilitering, der skaber tillid og fremdrift. Alle bliver hørt, trivslen prioriteres, og samarbejdet forbliver smidigt.'
+        en: 'I meet users with patience and high empathy. Technical needs are translated into simple instructions, and expectations are aligned early in the call.',
+        da: 'Møder brugere med stor tålmodighed og empati. Tekniske behov oversættes til letforståelige instruktioner, og forventninger afstemmes tidligt i opkaldet.'
       }
     },
     {
-      name: { en: 'Stakeholder communication & empathy', da: 'Interessentkommunikation & empati' },
+      name: { en: 'Calmness under pressure', da: 'Ro under pres (ESFJ-T)' },
       level: 5,
       text: {
-        en: 'Needs are translated into clear, actionable requirements; expectations are aligned early; the user perspective is kept front and centre.',
-        da: 'Behov oversættes til klare, handlingsorienterede krav; forventninger afstemmes tidligt; brugerperspektivet holdes i fokus.'
+        en: 'Thrives in high-volume environments and 24/7 shifts. I maintain structure, prioritize effectively, and create psychological safety for both users and the team.',
+        da: 'Trives i et miljø med højt tempo og skiftende arbejdstider. Bevarer strukturen, prioriterer skarpt og skaber ro for både brugeren og teamet.'
       }
     },
     {
-      name: { en: 'Structure & follow-through', da: 'Struktur & opfølgning' },
+      name: { en: 'Structure & ticket ownership', da: 'Struktur & sagsansvar' },
       level: 5,
       text: {
-        en: 'Plans, priorities, and checklists keep delivery on time. Loose ends are closed and ceremonies run predictably.',
-        da: 'Planer, prioriteringer og tjeklister sikrer rettidig levering. Løse ender lukkes, og ceremonier kører forudsigeligt.'
+        en: 'Methodical approach to incident handling. I follow tickets all the way through, close loose ends, and ensure high documentation quality in the ITSM tool.',
+        da: 'Metodisk tilgang til incidenthåndtering. Følger sager helt til dørs, lukker løse ender og sikrer høj dokumentationskvalitet i ITSM-systemet.'
       }
     },
     {
-      name: { en: 'Quality & consistency', da: 'Kvalitet & konsistens' },
+      name: { en: 'Knowledge sharing & ITIL culture', da: 'Vidensdeling & ITIL-kultur' },
       level: 4,
       text: {
-        en: 'Clear standards, naming, documentation, and acceptance criteria. Pragmatic quality that supports maintainability.',
-        da: 'Tydelige standarder, navngivning, dokumentation og acceptkriterier. Pragmatisk kvalitet, der understøtter vedligeholdelse.'
+        en: 'Contributes actively to standardizing solutions, updating knowledge base articles, and ensuring consistent service quality across shifts.',
+        da: 'Bidrager aktivt til standardisering af løsninger, opdatering af KB-artikler og sikring af en ensartet servicekvalitet på tværs af vagthold.'
       }
     },
     {
-      name: { en: 'Feedback-driven growth', da: 'Feedback-drevet udvikling' },
+      name: { en: 'Feedback-driven optimization', da: 'Feedback-drevet optimering' },
       level: 4,
       text: {
-        en: 'Feedback is actively sought and turned into concrete improvements. Sensitive to signals yet resilient and adaptive.',
-        da: 'Feedback opsøges aktivt og omsættes til konkrete forbedringer. Følsom for signaler, men robust og omstillingsparat.'
+        en: 'Actively uses user feedback and performance metrics to optimize support workflows and personal service delivery.',
+        da: 'Opsøger og bruger aktivt feedback fra brugere og målinger til at optimere supportflowet og den personlige serviceleverance.'
       }
     },
     {
-      name: { en: 'Team dynamics (ESFJ-T)', da: 'Teamdynamik (ESFJ-T)' },
+      name: { en: 'Team cooperation & collaboration', da: 'Teamarbejde & samarbejde (ESFJ-T)' },
       level: 5,
       text: {
-        en: 'Pairs well with analysts by humanising data; with ideators by turning ideas into clear plans; with drivers by aligning people and process. Creates psychological safety and sustained pace.',
-        da: 'Matcher godt med analytikere (præcision) ved at humanisere data; med idéskabere (vision) ved at omsætte idéer til klare planer; med drivere (tempo) ved at skabe alignment mellem mennesker og proces. Skaber psykologisk tryghed og vedvarende tempo.'
+        en: 'Acts as a strong bridge between 1st, 2nd, and 3rd line. Promotes alignment, a positive team spirit, and smooth collaboration across specialized teams.',
+        da: 'Fungerer som en stærk bro mellem 1st, 2nd og 3rd line. Skaber godt humør, alignment og et smidigt samarbejde på tværs af faggrupper.'
       }
     }
   ],
@@ -174,13 +138,13 @@ export const cvProfile: CvProfile = {
       company: 'Customer Support Specialist - CCC Nordic',
       description: {
         en:
-          'At CCC Nordic, I support customers by solving a wide range of issues with a calm, structured and solution-focused approach. ' +
-          'I work through complex problems, communicate clearly with customers, and make sure each case is followed through to a solid resolution. ' +
-          'The role has strengthened my communication skills, my ability to stay composed under pressure, and my proactive mindset in delivering strong customer support.',
+          'At CCC Nordic, I deliver high-volume 1st and 2nd line phone support with a calm, structured, and solution-focused approach. ' +
+          'I perform advanced technical troubleshooting, prioritize incoming incidents based on business impact, and ensure detailed documentation in our ITSM tools. ' +
+          'The role has significantly sharpened my ability to manage complex cases, set clear expectations, and maintain high service delivery across busy shifts.',
         da:
-          'Hos CCC Nordic støtter jeg kunder ved at løse en bred vifte af problemer med en rolig, struktureret og løsningsorienteret tilgang. ' +
-          'Jeg arbejder mig igennem komplekse udfordringer, kommunikerer tydeligt med kunder og sikrer, at hver sag følges gennem til en solid løsning. ' +
-          'Rollen har styrket mine kommunikationsfærdigheder, min evne til at forblive rolig under pres og min proaktive tilgang til at levere stærk kundesupport.'
+          'Yder daglig 1st og 2nd line telefonisk support i et it-miljø med højt tempo, hvor jeg håndterer komplekse tekniske problemstillinger og guider brugere sikkert igennem fejlfinding. ' +
+          'Jeg foretager visitation og prioritering af incidents baseret på forretningskritikalitet, dokumenterer sager grundigt i ITSM-systemer og følger dem helt til afslutning. ' +
+          'Rollen har styrket min evne til at bevare det fulde overblik under pres og sikre en ensartet, høj servicekvalitet på alle vagter.'
       }
     },
     {
@@ -193,10 +157,8 @@ export const cvProfile: CvProfile = {
           ' existing systems are maintained and optimized, and issues are diagnosed and resolved to ensure reliability.' +
           ' Projects are delivered efficiently and to a high standard through close team collaboration.',
         da:
-          'Hos ITAGIL udvikles skræddersyede softwareløsninger til kunder. Virksomhedens CMS videreudvikles,' +
-          ' og kunders hjemmesider bygges og vedligeholdes efter deres behov. Nye funktioner leveres, eksisterende' +
-          ' systemer vedligeholdes og optimeres, og problemer diagnosticeres og løses for at sikre stabil drift. ' +
-          'Projekter leveres effektivt og i høj kvalitet gennem tæt samarbejde i teamet.'
+          'Udviklede og vedligeholdt skræddersyede softwareløsninger og virksomhedens CMS. Implementerede nye funktioner, ' +
+          'fejlrettede eksisterende systemer og bidrog til stabile løsninger gennem tæt samarbejde med teamet.'
       }
     },
     {
@@ -218,32 +180,30 @@ export const cvProfile: CvProfile = {
       company: 'IT Support Specialist - Technical Education Copenhagen',
       description: {
         en:
-          'First- and second-level support was provided, with hardware and software issues diagnosed and resolved and ' +
-          'technical assistance delivered to users. System maintenance and optimization were carried out, while experience ' +
-          'was gained in web development and IT service management.',
+          'Delivered comprehensive 1st and 2nd level IT support for students, teachers, and administrative staff. ' +
+          'Diagnosed and resolved hardware, software, and network issues, configured and deployed workstations, and managed users in Active Directory and Entra ID. ' +
+          'Worked structured with ITIL-based IT Service Management for incident handling, asset management, and documentation, ensuring stable and reliable operations.',
         da:
-          '1. og 2. level support blev ydet, hvor hardware- og softwareproblemer blev diagnosticeret og løst, og ' +
-          'teknisk assistance blev leveret til brugere. Systemvedligeholdelse og optimering blev udført, og der blev ' +
-          'opnået erfaring med webudvikling og IT-service management.'
+          'Leverede bred 1st og 2nd level IT-support til både elever, undervisere og administrative medarbejdere. ' +
+          'Diagnosticerede og løste hardware-, software- og netværksfejl, klargjorde arbejdsstationer samt administrerede brugere og rettigheder i Active Directory og Entra ID. ' +
+          'Arbejdede struktureret med ITIL-baseret IT Service Management til incidenthåndtering, asset management og fejlsøgning, hvilket sikrede stabil og effektiv supportdrift.'
       }
     }
   ],
-  education: [
+   education: [
     {
       date: 'Jun. 2022 - Feb. 2025',
       name: {
-        en: 'Software engineering at DTU',
+        en: 'Software Engineering at DTU',
         da: 'Software Engineering på DTU'
       },
       description: {
         en:
-          'At DTU, a solid foundation in software engineering was established. Coursework included algorithms and data structures,' +
-          ' computer systems, distributed applications, UX design and prototyping, and software engineering methodologies. ' +
-          'Project management skills were developed, and practical programming assignments connected theory with application.',
+          'Gained a deep analytical foundation in software architecture, operating systems, and distributed applications. ' +
+          'This engineering background significantly strengthens my root-cause analysis skills, allowing me to understand complex system dependencies and troubleshoot advanced errors that go beyond standard support procedures.',
         da:
-          'På DTU blev der opbygget et solidt fundament i software engineering. Forløbet omfattede algoritmer og datastrukturer,' +
-          ' computersystemer, distribuerede applikationer, UX-design og prototypeudvikling samt software engineering-metoder. ' +
-          'Projektledelseskompetencer blev udviklet, og praktiske programmeringsopgaver bandt teori sammen med anvendelse.'
+          'Studerede Software Engineering på DTU med fokus på softwarearkitektur, operativsystemer og distribuerede applikationer. ' +
+          'Uddannelsen har givet mig stærke analytiske evner og en dyb systemforståelse, hvilket ruster mig til avanceret fejlsøgning og root-cause analyse i komplekse it-infrastrukturer.'
       },
       legacyDetails:
         'Operating Systems, Algorithms and Data Structures, Computer Systems, Introduction to Coordination of Distributed Applications, UX Design and Prototype Development, Software Engineering, Project Management, Physics 1, Introductory Programming'
@@ -251,20 +211,18 @@ export const cvProfile: CvProfile = {
     {
       date: 'Jan. 2016 - Jun. 2021',
       name: {
-        en: 'Datatechnitian specialized in Programming - EUX TEC Ballerup',
+        en: 'Datatechnician specialized in Programming - EUX TEC Ballerup',
         da: 'Datatekniker med speciale i programmering - EUX TEC Ballerup'
       },
       description: {
         en:
-          'At EUX TEC Ballerup, a specialization as a datatechnician in programming was completed. ' +
-          'Broad exposure was gained across IT disciplines, including Java and C# programming, database systems, ' +
-          'Linux and Windows server technologies, virtualization, embedded systems, and mobile application development. ' +
-          'Emphasis was also placed on IT service management, networking, and system development through project-oriented work.',
+          'Completed a comprehensive IT education combining software development with enterprise operations. ' +
+          'Acquired robust skills within Windows/Linux server technologies, virtualization, and networking. ' +
+          'The program had a strong emphasis on IT Service Management (ITIL), bridges the gap between technical operations and structured end-user support.',
         da:
-          'På EUX TEC Ballerup blev en specialisering som datatekniker med fokus på programmering gennemført. ' +
-          'Der blev opnået bred indsigt i IT-discipliner, herunder programmering i Java og C#, databasesystemer, ' +
-          'Linux- og Windows-serverteknologier, virtualisering, indlejrede systemer og udvikling af mobile applikationer. ' +
-          'Der blev også lagt vægt på IT-service management, netværk og systemudvikling gennem projektorienteret arbejde.'
+          'Uddannet datatekniker med kombination af softwareudvikling, netværk og it-drift. ' +
+          'Opnåede bred teknisk indsigt i Windows/Linux serverteknologier, netværk og virtualisering. ' +
+          'Uddannelsen indeholdt stort fokus på IT Service Management (ITIL), hvilket sikrer en struktureret og procesorienteret tilgang til support og fejlsøgning.'
       },
       legacyDetails:
         'Information Technology, Technical Subjects, Advanced Operating Systems, Backup Technology, Computer Technology, Server Technology, Programming (Java), Programming (C#), Database Systems, IT Requirement Specification, System Development and Project Management, Virtualization, Embedded Controller, Programming of Mobile Applications, IT Service Management, Network Technology, Web Server Technology'
@@ -278,7 +236,7 @@ export const cvProfile: CvProfile = {
         en:
           'In the role at Thansen, customer service and sales activities were handled, including selling automotive parts and accessories and assisting customers with their requests. Communication skills were strengthened and a service-minded approach was reinforced.',
         da:
-          'I rollen hos Thansen blev kundeservice- og salgsaktiviteter håndteret, herunder salg af bildel og tilbehør samt hjælp til kunders forespørgsler. Kommunikationsevner blev styrket, og en serviceorienteret tilgang blev understøttet.'
+          'Leverede kundeservice og rådgivning omkring reservedele og tilbehør. Arbejdede med salg, problemløsning og vejledning af kunder, hvilket styrkede mine kommunikationsevner og min evne til hurtigt at afdække kunders behov.'
       }
     },
     {
@@ -290,8 +248,7 @@ export const cvProfile: CvProfile = {
           'and assisting customers with their requests. Communication skills were strengthened and a service-minded ' +
           'approach was reinforced.',
         da:
-          'Salg og kundeservice blev håndteret, herunder salg af bøger, brætspil og legetøj samt hjælp til ' +
-          'kunders forespørgsler. Kommunikationsevner blev styrket, og en serviceorienteret tilgang blev understøttet.'
+          'Leverede daglig kundeservice og rådgivning i et travlt butiksmiljø. Hjalp kunder med at finde de rette produkter og sikrede en positiv kundeoplevelse gennem god kommunikation og høj service.'
       }
     },
     {
@@ -302,8 +259,7 @@ export const cvProfile: CvProfile = {
           'Tasks related to customer service, communications, and situation handling were supported, fostering a ' +
           'calm and solution-oriented approach to unexpected challenges.',
         da:
-          'Opgaver inden for kundeservice, kommunikation og situationshåndtering blev understøttet, ' +
-          'hvilket styrkede en rolig og løsningsorienteret tilgang til uventede udfordringer.'
+          'Deltog i frivilligt arbejde med fokus på kommunikation, koordinering og håndtering af uforudsete situationer. Erfaringen styrkede min evne til at bevare overblikket, samarbejde effektivt og handle roligt under pres.'
       }
     }
   ],
@@ -354,37 +310,34 @@ export const roleContentByRole: Record<CvRole, CvRoleContent> = {
     }
   },
   'it-support': {
-    title: 'IT Support Specialist',
+    title: 'IT Support Specialist | Service Desk | 1st & 2nd Line',
     quote: {
-      en: 'Service-minded IT supporter who takes ownership, solves issues thoroughly and makes technology feel simple.',
-      da: 'Serviceminded IT-supporter, der tager ansvar, løser problemer grundigt og gør teknologi enkel for brugeren.'
+      en: 'Service-minded IT supporter motivated by contributing to DSB\'s 24/7 ServiceDesk with structured incident handling and a calm approach under pressure.',
+      da: 'Serviceminded IT-supporter, der motiveres af at bidrage til DSB\'s døgnbemandede ServiceDesk med struktureret incidenthåndtering og ro under pres.'
     },
     info: {
       en:
-        'IT supporter with experience in both 1st and 2nd level support and technical problem-solving. ' +
-        'I work structured and take ownership of cases from first contact to final resolution. ' +
-        'With a background in both IT and customer-facing roles, I am used to explaining technical issues ' +
-        'in a clear and calm way, even when things are busy. My technical foundation in systems and development ' +
-        'gives me a strong understanding of how solutions are built, but my focus is always on creating a smooth ' +
-        'and reliable experience for the end user.',
+        'IT supporter highly motivated by delivering reliable support for DSB\'s ServiceDesk to keep internal users running 24/7. ' +
+        'I have strong hands-on experience with 1st and 2nd line phone support, structured incident handling, and clear communication under pressure. ' +
+        'I take pride in ownership of tickets from first contact to final resolution, ensuring expectations are aligned. ' +
+        'My logical and development background allows me to analyze complex technical errors quickly, while always maintaining a calm, empathetic, and service-minded approach.',
       da:
-        'IT-supporter med erfaring inden for både 1st og 2nd level support og teknisk fejlfinding. ' +
-        'Jeg arbejder struktureret og tager ansvar for mine sager fra første henvendelse til endelig løsning. ' +
-        'Med baggrund i både IT og kundevendte roller er jeg vant til at forklare tekniske problemstillinger ' +
-        'klart og roligt, også når der er travlt. Min tekniske forståelse giver mig et solidt fundament, ' +
-        'men mit fokus er altid at skabe en stabil og tryg oplevelse for brugeren.'
+        'IT-supporter med stor motivation for at levere stabil support i DSB\'s ServiceDesk, der sikrer, at kollegerne hjælpes godt videre døgnet rundt. ' +
+        'Jeg har solid praktisk erfaring med både 1st og 2nd line support, telefonisk fejlfinding og struktureret sagsbehandling i travle driftsmiljøer. ' +
+        'Jeg tager fuldt ejerskab over incidents fra første opkald til endelig løsning og sikrer en tæt, tryg forventningsafstemning med brugeren. ' +
+        'Min tekniske baggrund gør mig i stand til hurtigt at analysere komplekse problemer og eskalere korrekt, uden at miste det servicemindede fokus.'
     },
     skillInfo: {
       en:
-        'I combine technical support expertise with problem-solving abilities. My experience spans system troubleshooting, ' +
-        'user support, and technical documentation. I\'m skilled at diagnosing issues quickly, communicating solutions clearly, ' +
-        'and maintaining systems to prevent problems. My development background helps me understand technical challenges deeply ' +
-        'and provide reliable, long-term solutions.',
+        'My profile bridges technical understanding with structured service delivery based on ITIL processes. ' +
+        'I work methodically with Incident Management, documentation, and root-cause analysis to ensure high service quality. ' +
+        'I am adept at translating technical concepts into simple instructions for users with varied backgrounds. ' +
+        'My software engineering background acts as a strong tool for understanding advanced systems and collaborating effectively with specialized 3rd line teams.',
       da:
-        'Jeg kombinerer teknisk support-ekspertise med problemløsningsevner. Min erfaring omfatter system-fejlfinding, ' +
-        'bruger-support og teknisk dokumentation. Jeg kan diagnosticere problemer hurtigt, kommunikere løsninger klart ' +
-        'og vedligeholde systemer for at forhindre problemer. Min udviklings-baggrund hjælper mig med at forstå tekniske ' +
-        'udfordringer grundigt og give pålidelige, langsigtede løsninger.'
+        'Min profil forener teknisk problemløsning med struktureret serviceleverance baseret på ITIL-processer. ' +
+        'Jeg arbejder metodisk med Incident Management, dokumentation og fejlsøgning, hvilket sikrer en ensartet og høj servicekvalitet. ' +
+        'Jeg er vant til at omstille min kommunikation og gøre tekniske løsninger letforståelige for alle typer af medarbejdere. ' +
+        'Min baggrund inden for softwareudvikling giver mig desuden en stærk fordel, når komplekse systemfejl skal gennemskues og formidles videre til specialister.'
     }
   },
   general: {

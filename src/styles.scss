@@ -26,6 +26,15 @@
 }
 
 @media print {
+	.reveal-on-scroll,
+	.reveal-on-scroll.is-visible {
+		opacity: 1 !important;
+		transform: none !important;
+		filter: none !important;
+		transition: none !important;
+		animation: none !important;
+	}
+
 	body.cv-print-mode,
 	html.cv-print-mode {
 		background: #fff !important;
