@@ -68,12 +68,11 @@ that ISN'T already protected by Google's own ACLs.
       point once merged.
 - [ ] Longer-term/maybe: a real backend if any future feature needs
       server-side authorization instead of relying on Google's own ACLs.
-- [ ] Clone the other side projects (Chat-App, KanBan, NoteEase,
-      SimonGame, password project, etc.) down into the local coding
-      folder so Claude can actually read their code — needed before
-      building the Firebase backend (to see Chat-App's existing setup)
-      and before the iframe-embed work. Explicitly deferred by Niclas for
-      later, not blocking anything right now.
+- [x] ~~Clone the other side projects down into the local coding folder~~
+      — **done 2026-08-06.** Cloned: `Chat-App`, `NoteEase`,
+      `PasswordGenerator`, `SimonGame`. **`KanBan` was not cloned** —
+      still only referenced via its GitHub link in `cv-profile.ts`, not
+      present locally. Clone it too whenever it's needed.
 
 ## Planned: roles (owner vs. allowed) — idea captured 2026-08-06, not built yet
 
@@ -131,21 +130,37 @@ follow rather than starting cold — likely Firestore for the project
 states (live/off/coming-soon per project) and, per the earlier open
 question, this also unblocks turning `ALLOWED_EMAILS` into a live
 in-dashboard editable list instead of a code-and-redeploy config file,
-since the same backend serves both needs. Not yet decided: whether this
-website uses the *same* Firebase project as Chat-App or a separate one —
-worth checking Chat-App's setup once it's cloned locally (see new todo
-below) before deciding.
+since the same backend serves both needs.
+
+**Checked Chat-App's actual setup now that it's cloned (`Chat-App/src/firebase.js`):**
+React (Create React App) app using Firebase Auth + Firestore + Storage, on
+its own dedicated Firebase project (`chat-app-c1cbc`) — config is plain
+`initializeApp(firebaseConfig)` / `getAuth()` / `getFirestore()` /
+`getStorage()`, with the config object hardcoded directly in source
+(normal for Firebase's client SDK — the apiKey etc. aren't secret the way
+a server key is; real protection comes from Firestore/Storage security
+rules, same "public config, rules do the real gating" shape as this
+site's own `ALLOWED_EMAILS`/Google-ACL approach).
+
+Leaning towards: **a separate, dedicated Firebase project for
+Personal-Website**, not reusing `chat-app-c1cbc` — that project is
+purpose-built and named for the chat app specifically, and mixing in
+unrelated dashboard/allowlist/project-toggle data would just be
+confusing to manage later. Not fully decided, but the Chat-App setup
+gives a concrete template to copy (`firebase.js` shape, `firebase`
+npm package, Firestore for data) rather than designing from scratch.
 
 ## Planned: embed minor showcase projects via iframe — idea captured 2026-08-06, not built yet
 
 Different use case from E-conomic, and a different embedding approach on
 purpose: small side/demo projects (games, tools, one-offs — the kind
-already listed on the Portfolio page, e.g. Chat-App, KanBan, NoteEase,
-SimonGame) get deployed independently to their own subdomain on the
-hosting platform. Instead of visitors clicking through and leaving
-niclasjuul.dk entirely, show the live running project inside a frame on
-the site itself (e.g. embedded in its Portfolio card, or opened in a
-modal/panel), so browsing stays on the main site.
+already listed on the Portfolio page, e.g. Chat-App, NoteEase,
+SimonGame — **not KanBan, see below, it isn't a web app**) get deployed
+independently to their own subdomain on the hosting platform. Instead of
+visitors clicking through and leaving niclasjuul.dk entirely, show the
+live running project inside a frame on the site itself (e.g. embedded in
+its Portfolio card, or opened in a modal/panel), so browsing stays on the
+main site.
 
 Native merge (like E-conomic) doesn't make sense here — these projects
 don't need to share the site's login/session, they're just meant to be
@@ -163,6 +178,37 @@ that excludes niclasjuul.dk, the browser will refuse to render the iframe
 server response headers, not something fixable from the parent site's
 side. Needs a per-project check once each is actually deployed, not
 something to assume works uniformly.
+
+**What each cloned project actually is** (checked 2026-08-06, now that
+they're cloned locally):
+
+- `NoteEase` — Create React App, no backend/Firebase found, looks like
+  client-only state. Needs a build step to deploy.
+- `PasswordGenerator` — plain HTML/CSS/JS, no framework, no build step.
+  Simplest possible thing to host on a subdomain.
+- `SimonGame` — same, plain HTML/CSS/JS, no build step.
+- `Chat-App` — React (CRA) + Firebase (see backend section above). This
+  one's a bit more involved to deploy/iframe than the other two, and
+  actually *does* have its own login (Firebase Auth) — worth deciding
+  later whether that's confusing alongside the site's own Google login,
+  or just accepted as "each embedded project handles its own auth if it
+  has any."
+- `KanBan` — **cloned 2026-08-06, and it breaks the iframe plan.** Not a
+  web app at all: a JavaFX desktop application (`pom.xml`, `javafx-controls`,
+  `javafx-fxml`) with an explicit client-server split (`serverMain` +
+  `clientMain`, IPs configured manually in a `Config` class), meant to be
+  run locally through IntelliJ IDEA — looks like a DTU coursework project
+  (`groupId: dk.dtu`). There is no browser-runnable version to point an
+  iframe at.
+
+  **Consequence:** the iframe-embed plan (subdomain + `<iframe>`) doesn't
+  apply to KanBan as-is. Turns out this is already handled — its
+  `cv-profile.ts` entry already has `livepreviewurl: ''` (empty) and a
+  description explicitly saying the live preview won't work, clone from
+  GitHub instead. So it's already just a GitHub-link portfolio entry,
+  no live demo, matching what makes sense given it can't run in a
+  browser. Niclas is open to scrapping the entry entirely later on;
+  nothing to build here either way.
 
 ## Open questions to revisit later
 
