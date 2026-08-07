@@ -1,0 +1,77 @@
+<section class="sheet-selector">
+  <div class="sheet-header">
+    <span class="sheet-icon" aria-hidden="true">&#9638;</span>
+    <div>
+      <h2>Google Sheets</h2>
+      <p>Manage your Google Sheets connection</p>
+    </div>
+  </div>
+
+  <div *ngIf="!(isAuthenticated$ | async)" class="sheet-empty">
+    <h3>Connect your Google account</h3>
+    <p>Log in first, then choose where imported transactions should sync.</p>
+  </div>
+
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <div *ngIf="sheetId" class="sheet-connected">
+      <div class="connected-topline">
+        <span>Connected Sheet</span>
+        <a [href]="getSheetUrl()" target="_blank" class="sheet-link" title="Open in Google Sheets">&#8599;</a>
+      </div>
+
+      <p class="sheet-name">E-conomic Budget</p>
+      <p class="sheet-id">{{ getSheetPreview() }}</p>
+      <span class="status-pill">Connected</span>
+
+      <button (click)="unlinkSheet()" class="change-sheet-button">
+        &#8635; Change Sheet
+      </button>
+    </div>
+
+    <div *ngIf="!sheetId" class="sheet-setup">
+      <p class="setup-message">Choose an existing spreadsheet or create a new budget sheet.</p>
+
+      <button (click)="createNewSheet()" [disabled]="isCreating" class="create-sheet-button">
+        {{ isCreating ? 'Creating...' : 'Create New Sheet' }}
+      </button>
+
+      <div class="divider">or</div>
+
+      <label class="option-label" for="sheetIdInput">Link existing sheet</label>
+      <div class="link-sheet-form">
+        <input
+          id="sheetIdInput"
+          [(ngModel)]="sheetIdInput"
+          type="text"
+          placeholder="Paste Google Sheet ID"
+          class="sheet-id-input"
+          (keyup.enter)="linkExistingSheet()"
+        />
+        <button
+          (click)="linkExistingSheet()"
+          [disabled]="!sheetIdInput || isLinking"
+          class="link-button"
+        >
+          {{ isLinking ? 'Linking...' : 'Link' }}
+        </button>
+      </div>
+
+      <button
+        (click)="browseGoogleDrive()"
+        class="browse-button"
+        title="Browse and select a spreadsheet from Google Drive"
+      >
+        Select from Drive
+      </button>
+
+      <p class="option-hint">
+        The sheet ID is the long value between /d/ and /edit in a Google Sheets URL.
+      </p>
+    </div>
+  </ng-container>
+
+  <div *ngIf="error" class="sheet-error">
+    <p>{{ error }}</p>
+    <button (click)="clearError()" class="retry-button">Dismiss</button>
+  </div>
+</section>

@@ -1,0 +1,117 @@
+@use '../../../../../../styles/cyberpunk-design' as *;
+
+.budget-wrapper {
+  margin-top: $space-lg;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  padding: 0 $space-2xl $space-2xl;
+  color: $text-primary;
+}
+
+.budget-title {
+  font-size: 1.875rem;
+  font-weight: 900;
+  font-family: $font-accent;
+  margin-bottom: $space-lg;
+  @include neon-glow($neon-cyan);
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: $space-sm;
+  color: $text-primary;
+}
+
+.budget-table {
+  // 150px category column + 14 value columns (12 months + Total + Average).
+  // Value columns need real room: formatted amounts like "-1.234,56" or a
+  // yearly "Total" of "240.000,00" don't fit in a narrow column — they'd
+  // just get silently cut off with "...", which for a budget table means
+  // hiding actual numbers, not just a cosmetic overflow.
+  min-width: 150px + (14 * 110px);
+  border-collapse: collapse;
+  background-color: rgba($dark-bg, 0.6);
+  color: $text-primary;
+  margin-bottom: $space-2xl;
+  text-align: left;
+  table-layout: fixed;
+  width: 100%;
+  max-width: 100%;
+
+  th,
+  td {
+    border: 1px solid rgba($neon-cyan, 0.15);
+    padding: $space-sm $space-md;
+    font-size: 0.875rem;
+  }
+
+  th.table-header {
+    font-weight: 700;
+    background-color: rgba($neon-cyan, 0.08);
+    color: $text-primary;
+    width: 110px !important;
+
+    &:first-child {
+      width: 150px !important;
+    }
+  }
+
+  td.category-cell {
+    font-weight: 500;
+    width: 150px !important;
+    color: $text-secondary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  td.value-cell {
+    width: 110px !important;
+    text-align: right;
+    white-space: nowrap;
+
+    &.positive {
+      color: $neon-lime;
+    }
+
+    &.negative {
+      color: $neon-pink;
+    }
+
+    &.zero {
+      color: inherit; // fallback until overridden below
+    }
+
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba($neon-cyan, 0.1);
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .budget-wrapper {
+    padding: 0 $space-md $space-md;
+  }
+}
+
+// Income table → zeros should read as neutral-positive
+.income-table td.value-cell.zero {
+  color: $neon-lime;
+}
+
+// Expense table → zeros should read as neutral-negative
+.expense-table td.value-cell.zero {
+  color: $neon-pink;
+}
+
+// Disposable table → zeros neutral
+.disposable-table td.value-cell.zero {
+  color: $text-muted;
+}

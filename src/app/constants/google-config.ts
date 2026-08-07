@@ -8,10 +8,38 @@
 export const GOOGLE_CONFIG = {
   CLIENT_ID: '520118713358-m78lld03h4vsau42pt218dec2mccv9to.apps.googleusercontent.com',
 
-  // Identity only for now. Sheets/Drive scopes get added when E-conomic is merged in.
+  // Sheets/Drive scopes needed by the merged E-conomic feature, plus the
+  // original identity scopes for login itself.
   SCOPES: [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
+  ],
+
+  // API key for the Google Picker ("Select from Drive" in E-conomic).
+  // Restricted to this site's origins and to the Picker + Drive APIs
+  // in Google Cloud Console.
+  API_KEY: 'AIzaSyCkEE1O3FKKwW52mA4GrIHcXj3QQkad5XI',
+};
+
+/**
+ * Google Sheets configuration for the merged E-conomic feature.
+ * Ported from E-conomic/frontend/src/app/constants/google-config.ts.
+ */
+export const SHEET_CONFIG = {
+  STORAGE_KEY: 'e_conomic_sheet_id',
+  TRANSACTIONS_SHEET_NAME: 'Transactions',
+  HEADER_ROW_NUMBER: 1,
+  HEADERS: [
+    'Date',
+    'Title',
+    'Amount',
+    'MainCategory',
+    'SubCategory',
+    'Month',
+    'Year',
+    'Timestamp',
   ],
 };
 

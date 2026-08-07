@@ -1,0 +1,44 @@
+<div #wrapper class="transaction-wrapper">
+  <h3 class="transaction-heading">
+    Transactions in <span class="highlight">{{ selectedDetails?.month }}</span>
+    for <span class="highlight">{{ selectedDetails?.category }}</span>
+  </h3>
+
+  <div class="table-scroll">
+    <table class="transaction-table">
+      <thead>
+        <tr class="table-header">
+          <th class="table-cell">Dato</th>
+          <th class="table-cell">Title</th>
+          <th class="table-cell">Beløb</th>
+          <th class="table-cell">Kategori</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let t of filteredTransactions; let i = index"
+          class="table-row"
+        >
+          <td class="table-cell">{{ t.date }}</td>
+          <td class="table-cell">{{ t.title }}</td>
+          <td
+            class="table-cell"
+            [ngClass]="{
+              negative: t.amount < 0,
+              positive: t.amount >= 0
+            }"
+          >
+            {{ t.amount | number : '1.2-2' : 'da-DK' }}
+          </td>
+          <td class="table-cell">{{ t.subCategory }}</td>
+        </tr>
+
+        <tr *ngIf="filteredTransactions.length === 0">
+          <td colspan="4" class="table-cell no-data">
+            No transactions found for this category and month.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -54,6 +54,9 @@
   flex-direction: column;
   align-items: flex-start;
   gap: $space-md;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 
   &.disabled {
     cursor: default;

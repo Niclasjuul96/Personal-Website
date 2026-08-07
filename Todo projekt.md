@@ -19,6 +19,8 @@ tracker), more later.
     merge the two anyway. Registered origins: `http://localhost:4200` and
     `https://niclasjuul.dk`.
   - Session persisted in `localStorage` (access token, name, picture, email).
+  - `GOOGLE_CONFIG.SCOPES` now includes Sheets + Drive scopes (not just
+    identity) — extended when E-conomic was merged in, see below.
 - `ALLOWED_EMAILS` allowlist (`src/app/constants/google-config.ts`) gates
   access to owner-only pages. Anyone can log in; only listed emails see
   gated content. Add/remove emails there and redeploy to change access —
@@ -26,14 +28,17 @@ tracker), more later.
   it'd require standing up a backend).
 - `/dashboard` route exists, guarded by `allowedGuard`
   (`src/app/guards/allowed.guard.ts`), redirects non-allowed users home.
-  Currently just a welcome message + a disabled "E-conomic — Coming soon"
-  card.
+  Welcome message + an E-conomic card linking into the real merged feature.
+- **E-conomic is merged in and working**, at `/dashboard/economic`
+  (also guarded by `allowedGuard`). See the dedicated section below for
+  what was ported and the decisions made along the way.
 - Key files:
-  - `src/app/constants/google-config.ts` — Client ID, scopes, ALLOWED_EMAILS
+  - `src/app/constants/google-config.ts` — Client ID, scopes, ALLOWED_EMAILS, SHEET_CONFIG
   - `src/app/services/google-auth.service.ts` — auth state, login/logout
   - `src/app/guards/allowed.guard.ts` — route protection
   - `src/app/pages/dashboard/` — the gated dashboard page
-  - `src/app/header/` — login button / user badge / Dashboard nav link
+  - `src/app/pages/dashboard/economic/` — the merged E-conomic feature
+  - `src/app/header/` — login button / user badge / access badges / Dashboard nav link
 
 ## Important architecture decision: what "allowed" actually protects
 
@@ -53,19 +58,10 @@ that ISN'T already protected by Google's own ACLs.
 
 ## Next steps (not yet started)
 
-- [x] ~~Decide how E-conomic actually gets merged in~~ — **decided
-      2026-08-06: native merge**, not iframe. Pull E-conomic's Angular
-      components into this app as a lazy-loaded route (e.g.
-      `/dashboard/economic`). Reasoning: native merge reuses the Google
-      login already built here; an iframe would mean a second, separate
-      login inside the frame (auth doesn't share across iframe origins),
-      which defeats the point of building shared login in the first place.
-- [ ] When merged: extend `GOOGLE_CONFIG.SCOPES` to include the
-      Sheets/Drive scopes E-conomic already uses (see
-      `E-conomic/frontend/src/app/constants/google-config.ts`), and re-ask
-      for consent since scopes changed.
-- [ ] Replace the "Coming soon" dashboard card with the real E-conomic entry
-      point once merged.
+- [x] ~~Decide how E-conomic actually gets merged in~~ — decided
+      2026-08-06: native merge, not iframe.
+- [x] ~~Extend GOOGLE_CONFIG.SCOPES, port E-conomic in, replace the Coming
+      soon card~~ — **done 2026-08-06, see dedicated section below.**
 - [ ] Longer-term/maybe: a real backend if any future feature needs
       server-side authorization instead of relying on Google's own ACLs.
 - [x] ~~Clone the other side projects down into the local coding folder~~
@@ -73,6 +69,146 @@ that ISN'T already protected by Google's own ACLs.
       `PasswordGenerator`, `SimonGame`. **`KanBan` was not cloned** —
       still only referenced via its GitHub link in `cv-profile.ts`, not
       present locally. Clone it too whenever it's needed.
+
+## Done: E-conomic native merge — completed 2026-08-06
+
+E-conomic's Angular components, services, and models are now ported into
+Personal-Website at `src/app/pages/dashboard/economic/`, mirroring
+E-conomic's own internal folder structure (`components/`, `services/`,
+`constants/`, `models/`). Route is `/dashboard/economic`, lazy-loaded via
+`loadComponent` (confirmed in the build output as its own
+`economic-component` chunk, ~161 kB, separate from `main.js` — visitors
+who never open it never download that weight) and guarded by the same
+`allowedGuard` as `/dashboard`.
+
+**Key decisions made while porting:**
+
+- **Auth was reconciled, not duplicated.** E-conomic had its own
+  `GoogleAuthService`; this site already has one. Checked what E-conomic's
+  `GoogleSheetsService` and `sheet-selector` component actually needed from
+  it — just `isAuthenticated` and `getAccessToken()`, which already exist
+  identically on this site's service — so the ported files import this
+  site's `GoogleAuthService` directly instead of bringing E-conomic's
+  copy along. Zero logic changes needed to make that work.
+- **Stripped E-conomic's own login/logout header UI** from the ported root
+  component (`economic.component.html`) — it's redundant now, since the
+  site's own header already handles login globally and the route guard
+  already ensures only logged-in, allowed users reach this page.
+- **Restyled to match the cyberpunk design system — done 2026-08-06,**
+  as a deliberate follow-up once the merge was working functionally.
+  All five component stylesheets (`economic.component.scss`,
+  `csv-upload.scss`, `budget-table.scss`, `transaction-details.scss`, and
+  `sheet-selector`'s styles) converted from E-conomic's original light/
+  blue theme to the site's dark neon palette via
+  `@use '.../styles/cyberpunk-design' as *`, reusing existing mixins
+  (`glass-morphism`, `neon-glow`, `no-jump-hover`) rather than inventing
+  new patterns. `sheet-selector` was also split from inline
+  `template`/`styles` into external `.html`/`.scss` files (matching
+  every other ported component) since inline component styles in this
+  project are plain CSS, not Sass, so `@use` wasn't available there
+  otherwise.
+
+  **Color mapping chosen:** neon-cyan for primary actions/headings
+  (matching the rest of the site), neon-lime for positive values and
+  "go" actions (Create Sheet, Confirm), neon-magenta for negative values
+  and errors — reusing the same lime=good/magenta=restricted semantic
+  already established by the header's "Access granted"/"No access"
+  badges, rather than introducing new colors.
+
+  Verified via computed styles (no light-theme backgrounds/colors
+  remained anywhere) since a real screenshot wasn't available in this
+  session — worth a quick visual look yourself to confirm it actually
+  reads well, especially contrast on the budget table's small text.
+- **Four real issues found and fixed 2026-08-06, from actually using it:**
+  the first two were pre-existing in E-conomic's original code, not
+  introduced by the merge — the port just carried them along faithfully.
+  1. **New CSV uploads replaced everything instead of adding to it.**
+     `mergeTransactions()` in `economic.component.ts` was a stub — despite
+     its name and a comment claiming otherwise, it just returned the
+     newly parsed rows and silently discarded whatever was already
+     loaded. `handleCsvParsed()` also read the budget totals straight off
+     the parser's output for the new file alone, rather than
+     re-aggregating from the full transaction list. Symptom: only the
+     just-uploaded file's data showed on screen until a page reload
+     re-fetched everything from Sheets. Fixed both: `mergeTransactions`
+     now actually merges + dedupes (same `date|title|amount|category` key
+     already used elsewhere for this), and `handleCsvParsed` calls the
+     existing `aggregateTransactions()` helper afterward instead of using
+     the parser's file-scoped totals directly.
+  2. **New transactions always landed at the bottom of the Transactions
+     sheet, unsorted.** `GoogleSheetsService.appendTransactions` used
+     Sheets' `values:append` API, which always inserts after the last row
+     with data regardless of date. Sorting the column natively in Sheets
+     wouldn't have helped either — dates are stored as plain "DD.MM.YYYY"
+     text (RAW input mode skips Sheets' own date parsing), and day-first
+     text doesn't sort chronologically as a string. Fixed by merging +
+     sorting chronologically in JS (added a `parseTransactionDate` helper
+     using the same date-parsing convention already used elsewhere in the
+     file) and rewriting the whole data range with `values.update` (PUT)
+     instead of appending. Confirmed working by Niclas with two real CSV
+     imports (import, delete, import a different file) — rows sort
+     correctly now.
+  3. **Numbers were getting cut off with "..." in the budget table.**
+     Introduced by the *original* E-conomic CSS, not the restyle — value
+     columns were hardcoded to 60px with `text-overflow: ellipsis`, fine
+     for small mock numbers but too narrow for real formatted amounts
+     like `-1.234,56` or a yearly total like `240.000,00`. Since this is
+     a budget table, silently truncating a number is a correctness
+     problem, not just a cosmetic one. Widened value columns to 110px
+     (table `min-width` scaled up to match, still horizontally
+     scrollable), removed the ellipsis/overflow-hiding from value cells
+     entirely (kept it only on the category-name column, where
+     truncating long text is reasonable). Verified with a realistic
+     6-figure amount (`245.678,90`) rendering fully with no clipping
+     (`scrollWidth <= clientWidth`).
+  4. **Negative/expense values looked purple, not red.** From the
+     restyle pass, not a bug — `$neon-magenta` (`#ff00ff`, true magenta)
+     was chosen for negative values, and it reads as purple. Swapped to
+     `$neon-pink` (`#ff006e`), a redder tone already defined in the
+     design system but previously unused anywhere on the site. Scoped
+     narrowly to `budget-table.scss` and `transaction-details.scss` (the
+     actual expense/negative-amount coloring) — deliberately left
+     `$neon-magenta` alone everywhere else (header's "No access" badge,
+     "Coming soon" badges, sync/error states), since those represent a
+     different concept (restricted access, sync failure) than "this is
+     an expense," and weren't what was flagged. Verified the rendered
+     color is `rgb(255, 0, 110)` (`#ff006e`) after a hard reload — an
+     HMR update briefly showed the stale color first, not a real bug,
+     just needed a fresh page load to pick up the new stylesheet.
+- **Added two things to the whole app that E-conomic needed:**
+  - `apis.google.com/js/api.js` script in `index.html` (Google Picker API,
+    used by the sheet-selector's "Select from Drive" button).
+  - `registerLocaleData(localeDa)` in `main.ts`, needed because the budget
+    tables format numbers with an explicit `'da-DK'` locale argument.
+    Deliberately did NOT change the site's global `LOCALE_ID` — the
+    pipes already specify the locale explicitly per-use, so nothing else
+    on the site is affected.
+- **One real type-checking difference** surfaced between the two Angular
+  projects (19 vs. 20): a `typeof val === 'number' && val > 0` pattern
+  inside an `[ngClass]` object literal type-checked fine in E-conomic but
+  not here — Angular's template compiler didn't narrow the type the same
+  way. Fixed with `$any(val)` casts in `budget-table.html`; purely a
+  type-checking workaround, no behavior change.
+- **Tested with a real Google account, 2026-08-06 (post-merge follow-up):**
+  logging in and reaching `/dashboard/economic` works for real, not just
+  simulated. Confirmed the scope change forced a fresh consent screen as
+  expected.
+- **Fixed the Google Picker gap flagged right after the merge:** the
+  ported `sheet-selector.ts` had `getDeveloperKey()` hardcoded to return
+  `''` (carried over from E-conomic, which never wired this up either) —
+  this caused a real "you don't have access to this page" error from
+  Google Drive when trying "Select from Drive". Root cause: the Picker
+  needs its own **API key** credential (separate from the OAuth Client
+  ID), with the Google Picker API *and* Google Drive API enabled and
+  restricted to this site's origins. Created that key, added it as
+  `GOOGLE_CONFIG.API_KEY` in `google-config.ts`, wired `getDeveloperKey()`
+  to read from it, and added a clearer in-app error message (pointing to
+  "Link existing sheet" as a manual fallback) for if the key's ever
+  missing again. **Confirmed working — selecting a sheet from Drive now
+  succeeds.**
+- **Still not exercised:** the full CSV import → Sheets sync → budget
+  table rendering flow with real transaction data. Worth a full pass
+  through that soon.
 
 ## Planned: roles (owner vs. allowed) — idea captured 2026-08-06, not built yet
 
