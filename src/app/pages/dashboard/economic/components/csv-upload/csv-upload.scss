@@ -1,0 +1,267 @@
+@use '../../../../../../styles/cyberpunk-design' as *;
+
+:host {
+  display: block;
+}
+
+.upload-container {
+  height: 100%;
+  box-sizing: border-box;
+  padding: $space-md;
+  @include glass-morphism;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-md;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-size: 1.125rem;
+    line-height: 1.2;
+  }
+
+  p {
+    margin-top: $space-xs;
+    color: $text-secondary;
+    font-size: 0.9rem;
+  }
+}
+
+.section-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  place-items: center;
+  border: 1px solid rgba($neon-cyan, 0.4);
+  background: rgba($neon-cyan, 0.08);
+  color: $neon-cyan;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.drop-zone {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  align-content: center;
+  padding: $space-md;
+  text-align: center;
+  border: 2px dashed rgba($neon-cyan, 0.3);
+  background: rgba($dark-bg-secondary, 0.4);
+  transition: all $transition-base;
+
+  &.dragging {
+    border-color: $neon-cyan;
+    background: rgba($neon-cyan, 0.08);
+    box-shadow: inset 0 0 0 1px rgba($neon-cyan, 0.3);
+  }
+}
+
+.drop-icon {
+  color: $neon-cyan;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba($neon-cyan, 0.6));
+}
+
+.drop-title,
+.drop-or,
+.drop-hint,
+.file-name {
+  margin: 0;
+}
+
+.drop-title {
+  margin-top: $space-sm;
+  color: $text-primary;
+  font-size: 1rem;
+}
+
+.drop-or {
+  margin-top: $space-sm;
+  color: $text-secondary;
+}
+
+.upload-label {
+  min-width: 130px;
+  margin-top: $space-md;
+  padding: $space-md $space-lg;
+  border: 2px solid $neon-cyan;
+  background: rgba($neon-cyan, 0.1);
+  color: $neon-cyan;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all $transition-base;
+
+  &:hover {
+    @include no-jump-hover($neon-cyan, 0.15);
+    box-shadow: $glow-cyan;
+  }
+}
+
+.drop-hint {
+  margin-top: $space-md;
+  color: $text-muted;
+  font-size: 0.88rem;
+}
+
+.file-name {
+  margin-top: $space-md;
+  color: $text-secondary;
+  font-size: 0.9rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-md;
+  background-color: rgba($dark-bg, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.modal-box {
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: $space-xl;
+  @include glass-morphism;
+  color: $text-primary;
+}
+
+.modal-title {
+  margin: 0 0 $space-md;
+  font-size: 1.25rem;
+  font-weight: 800;
+  @include neon-glow($neon-cyan);
+}
+
+.csv-table {
+  width: 100%;
+  margin-bottom: $space-md;
+  border: 1px solid rgba($neon-cyan, 0.2);
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  color: $text-secondary;
+
+  th,
+  td {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid rgba($neon-cyan, 0.15);
+  }
+
+  thead {
+    background-color: rgba($neon-cyan, 0.08);
+    color: $text-primary;
+  }
+}
+
+.toggle-mapping {
+  margin-bottom: $space-md;
+  border: none;
+  background: none;
+  color: $neon-cyan;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.column-mapping {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-md;
+  margin-bottom: $space-lg;
+}
+
+.column-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-label {
+  margin-bottom: $space-xs;
+  color: $text-primary;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.column-select {
+  padding: $space-sm;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background-color: $dark-bg-secondary;
+  color: $text-primary;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-sm;
+}
+
+.btn {
+  padding: $space-sm $space-md;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all $transition-base;
+
+  &.cancel {
+    border-color: rgba($text-muted, 0.5);
+    color: $text-secondary;
+
+    &:hover {
+      @include no-jump-hover($text-muted, 0.12);
+    }
+  }
+
+  &.confirm {
+    border-color: $neon-lime;
+    color: $neon-lime;
+
+    &:hover {
+      @include no-jump-hover($neon-lime, 0.12);
+      box-shadow: $glow-lime;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .column-mapping {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

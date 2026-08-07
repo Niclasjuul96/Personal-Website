@@ -1,0 +1,61 @@
+@use '../../../../../../styles/cyberpunk-design' as *;
+
+.transaction-wrapper {
+  margin-top: $space-2xl;
+  width: 100%;
+  max-width: 64rem; // 4xl
+  padding: $space-md;
+  color: $text-primary;
+}
+
+.transaction-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: $space-md;
+  color: $text-primary;
+}
+
+.highlight {
+  @include neon-glow($neon-cyan);
+  font-weight: 700;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba($dark-bg, 0.6);
+  color: $text-primary;
+  font-size: 0.875rem;
+}
+
+.table-header {
+  background-color: rgba($neon-cyan, 0.08);
+  color: $text-primary;
+}
+
+.table-row:hover {
+  background-color: rgba($neon-cyan, 0.06);
+  transition: background-color $transition-base;
+}
+
+.table-cell {
+  border: 1px solid rgba($neon-cyan, 0.15);
+  padding: $space-sm $space-md;
+}
+
+.positive {
+  color: $neon-lime;
+}
+
+.negative {
+  color: $neon-pink;
+}
+
+.no-data {
+  text-align: center;
+  color: $text-muted;
+}

@@ -1,0 +1,260 @@
+@use '../../../../../../styles/cyberpunk-design' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.sheet-selector {
+  height: 100%;
+  box-sizing: border-box;
+  padding: $space-md;
+  @include glass-morphism;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding-bottom: $space-md;
+  margin-bottom: $space-md;
+  border-bottom: 1px solid rgba($neon-cyan, 0.2);
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-size: 1.125rem;
+    line-height: 1.2;
+  }
+
+  p {
+    margin-top: $space-xs;
+    color: $text-secondary;
+    font-size: 0.9rem;
+  }
+}
+
+.sheet-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border: 1px solid rgba($neon-lime, 0.4);
+  background: rgba($neon-lime, 0.08);
+  color: $neon-lime;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.sheet-empty,
+.sheet-connected,
+.sheet-setup {
+  border: 1px solid rgba($neon-cyan, 0.2);
+  background: rgba($dark-bg-secondary, 0.4);
+}
+
+.sheet-empty {
+  padding: $space-md;
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    color: $text-primary;
+    font-size: 1rem;
+  }
+
+  p {
+    margin-top: $space-sm;
+    color: $text-secondary;
+    line-height: 1.5;
+  }
+}
+
+.sheet-connected {
+  overflow: hidden;
+}
+
+.connected-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-md;
+  border-bottom: 1px solid rgba($neon-cyan, 0.2);
+  color: $text-primary;
+  font-weight: 800;
+}
+
+.sheet-link {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: $neon-cyan;
+  text-decoration: none;
+
+  &:hover {
+    background: rgba($neon-cyan, 0.1);
+  }
+}
+
+.sheet-name {
+  margin: 0;
+  padding: 0.875rem $space-md 0.35rem;
+  color: $text-primary;
+  font-size: 1.05rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.sheet-id {
+  margin: 0;
+  padding: 0 $space-md;
+  color: $text-muted;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.status-pill {
+  display: inline-flex;
+  margin: 0.875rem $space-md;
+  padding: $space-xs $space-md;
+  border: 1px solid rgba($neon-lime, 0.5);
+  background: rgba($neon-lime, 0.1);
+  color: $neon-lime;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.change-sheet-button,
+.create-sheet-button,
+.browse-button,
+.link-button,
+.retry-button {
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  transition: all $transition-base;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.change-sheet-button {
+  width: calc(100% - #{$space-md * 2});
+  margin: 0 $space-md $space-md;
+  padding: $space-md;
+  border-color: $neon-cyan;
+  color: $neon-cyan;
+
+  &:hover {
+    @include no-jump-hover($neon-cyan, 0.12);
+  }
+}
+
+.sheet-setup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+}
+
+.setup-message,
+.option-hint,
+.option-label,
+.divider {
+  margin: 0;
+  color: $text-secondary;
+  font-size: 0.88rem;
+}
+
+.option-label {
+  color: $text-primary;
+  font-weight: 800;
+}
+
+.create-sheet-button,
+.browse-button {
+  width: 100%;
+  padding: $space-md;
+  border-color: $neon-lime;
+  color: $neon-lime;
+
+  &:hover:not(:disabled) {
+    @include no-jump-hover($neon-lime, 0.12);
+    box-shadow: $glow-lime;
+  }
+}
+
+.divider {
+  text-align: center;
+}
+
+.link-sheet-form {
+  display: flex;
+  gap: $space-sm;
+}
+
+.sheet-id-input {
+  min-width: 0;
+  flex: 1;
+  padding: $space-md;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background: $dark-bg-secondary;
+  color: $text-primary;
+  font-size: 0.9rem;
+
+  &:focus {
+    outline: none;
+    border-color: $neon-cyan;
+    box-shadow: 0 0 0 3px rgba($neon-cyan, 0.18);
+  }
+}
+
+.link-button {
+  padding: $space-md 0.9rem;
+  border-color: $neon-cyan;
+  color: $neon-cyan;
+
+  &:hover:not(:disabled) {
+    @include no-jump-hover($neon-cyan, 0.12);
+  }
+}
+
+.option-hint {
+  line-height: 1.45;
+}
+
+.sheet-error {
+  margin-top: $space-md;
+  padding: $space-md;
+  border: 1px solid rgba($neon-magenta, 0.4);
+  background: rgba($neon-magenta, 0.08);
+  color: $neon-magenta;
+
+  p {
+    margin: 0 0 $space-md;
+    color: $neon-magenta;
+  }
+}
+
+.retry-button {
+  padding: $space-sm 0.85rem;
+  border-color: $neon-magenta;
+  color: $neon-magenta;
+
+  &:hover {
+    @include no-jump-hover($neon-magenta, 0.12);
+  }
+}

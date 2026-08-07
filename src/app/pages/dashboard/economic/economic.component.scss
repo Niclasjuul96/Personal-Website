@@ -1,0 +1,232 @@
+@use '../../../../styles/cyberpunk-design' as *;
+
+:host {
+  display: block;
+  color: $text-primary;
+  font-family: $font-primary;
+}
+
+.app-main {
+  padding: $space-lg;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  overflow: hidden;
+  @include glass-morphism;
+  border: 1px solid rgba($neon-cyan, 0.2);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-lg $space-2xl;
+  border-bottom: 1px solid rgba($neon-cyan, 0.2);
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  font-family: $font-accent;
+  line-height: 1;
+  letter-spacing: -1px;
+  @include neon-glow($neon-cyan);
+}
+
+.setup-area {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.25fr) minmax(260px, 0.8fr) minmax(320px, 1fr);
+  align-items: stretch;
+  gap: $space-md;
+  padding: $space-2xl;
+}
+
+.sheets-column {
+  min-width: 0;
+}
+
+.sync-status {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  min-height: 56px;
+  padding: $space-md $space-lg;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  &.sync-idle {
+    display: none;
+  }
+
+  &.sync-syncing {
+    border-color: rgba($neon-yellow, 0.4);
+    background: rgba($neon-yellow, 0.08);
+    color: $neon-yellow;
+  }
+
+  &.sync-success {
+    border-color: rgba($neon-lime, 0.4);
+    background: rgba($neon-lime, 0.08);
+    color: $neon-lime;
+  }
+
+  &.sync-error {
+    border-color: rgba($neon-magenta, 0.4);
+    background: rgba($neon-magenta, 0.08);
+    color: $neon-magenta;
+  }
+}
+
+.year-selector {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: start;
+  padding: $space-md;
+  @include glass-morphism;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-xl;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-size: 1.125rem;
+    line-height: 1.2;
+    font-family: $font-primary;
+  }
+
+  p {
+    margin-top: $space-xs;
+    color: $text-secondary;
+    font-size: 0.9rem;
+  }
+}
+
+.section-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  place-items: center;
+  border: 1px solid rgba($neon-cyan, 0.4);
+  background: rgba($neon-cyan, 0.08);
+  color: $neon-cyan;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.year-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.year-button {
+  min-width: 76px;
+  min-height: 42px;
+  padding: $space-sm $space-md;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background: transparent;
+  color: $text-secondary;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: $font-primary;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: $neon-cyan;
+    color: $neon-cyan;
+    background: rgba($neon-cyan, 0.08);
+  }
+
+  &.active {
+    border-color: $neon-cyan;
+    background: rgba($neon-cyan, 0.15);
+    color: $neon-cyan;
+    box-shadow: $glow-cyan;
+  }
+}
+
+.year-empty {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  padding: 0 $space-md;
+  border: 1px dashed rgba($neon-cyan, 0.3);
+  background: rgba($dark-bg-secondary, 0.4);
+  color: $text-muted;
+  font-size: 0.9rem;
+}
+
+.budget-entry {
+  display: grid;
+  min-height: 220px;
+  margin: 0 $space-2xl $space-2xl;
+  place-items: center;
+  align-content: center;
+  padding: $space-xl;
+  text-align: center;
+  @include glass-morphism;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: $text-primary;
+    font-size: 1.25rem;
+  }
+
+  p {
+    max-width: 390px;
+    margin-top: $space-md;
+    color: $text-secondary;
+    line-height: 1.5;
+  }
+}
+
+.budget-entry-icon {
+  margin-bottom: $space-md;
+  color: $neon-cyan;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  filter: drop-shadow(0 0 8px rgba($neon-cyan, 0.6));
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    padding: $space-sm;
+  }
+
+  .app-header,
+  .setup-area {
+    padding: $space-md;
+  }
+
+  .setup-area {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-entry {
+    margin: 0 $space-md $space-md;
+  }
+}

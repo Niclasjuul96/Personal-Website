@@ -14,5 +14,11 @@ export const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'cv', component: CvComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [allowedGuard] },
+  {
+    path: 'dashboard/economic',
+    loadComponent: () =>
+      import('./pages/dashboard/economic/economic.component').then((m) => m.EconomicComponent),
+    canActivate: [allowedGuard]
+  },
   { path: '**', redirectTo: '' }
 ];

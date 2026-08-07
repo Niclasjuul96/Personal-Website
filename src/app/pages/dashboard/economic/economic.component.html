@@ -1,0 +1,73 @@
+<main class="app-main">
+  <section class="app-shell">
+    <header class="app-header">
+      <h1 class="app-title">E-conomic</h1>
+    </header>
+
+    <div class="setup-area">
+      <div *ngIf="syncStatus$ | async as status" [ngClass]="'sync-' + status" class="sync-status">
+        <span *ngIf="status === 'syncing'">&#8635; Syncing to Google Sheets...</span>
+        <span *ngIf="status === 'success'">&#10003; Synced to Google Sheets</span>
+        <span *ngIf="status === 'error'">&#10005; Sync failed - check console</span>
+      </div>
+
+      <csv-upload
+        (dataParsed)="handleCsvParsed($event)"
+        (transactionsToSync)="syncTransactionsToSheet($event)"
+      ></csv-upload>
+
+      <section class="year-selector">
+        <div class="section-heading">
+          <span class="section-icon" aria-hidden="true">&#9638;</span>
+          <div>
+            <h2>Select Year</h2>
+            <p>Choose the year to view your budget data and transactions</p>
+          </div>
+        </div>
+
+        <div class="year-options" *ngIf="availableYears.length > 0; else noYears">
+          <button
+            *ngFor="let year of availableYears"
+            type="button"
+            class="year-button"
+            [class.active]="selectedYear === year"
+            (click)="selectedYear = year; onYearSelected()"
+          >
+            {{ year }}
+          </button>
+        </div>
+
+        <ng-template #noYears>
+          <div class="year-empty">Import a CSV to populate years</div>
+        </ng-template>
+
+      </section>
+
+      <aside class="sheets-column">
+        <sheet-selector></sheet-selector>
+      </aside>
+    </div>
+
+    <section class="budget-entry" *ngIf="!selectedYear">
+      <div class="budget-entry-icon" aria-hidden="true">&#9606;&#9608;&#9604;</div>
+      <h2>Budget Tables</h2>
+      <p>Income, Expenses and Disposable Income tables will appear here for the selected year.</p>
+    </section>
+
+    <ng-container *ngIf="selectedYear">
+      <budget-table
+        [incomeData]="incomeData"
+        [expenseData]="expenseData"
+        [disposableIncomeData]="disposableIncomeData"
+        (cellClick)="onCellClick($event)"
+      ></budget-table>
+
+      <transaction-details
+        *ngIf="selectedDetails"
+        [selectedDetails]="selectedDetails"
+        [transactions]="filteredTransactions"
+        (close)="onCloseDetails()"
+      ></transaction-details>
+    </ng-container>
+  </section>
+</main>
