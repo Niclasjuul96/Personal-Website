@@ -1,0 +1,166 @@
+@use '../../../../styles/cyberpunk-design' as *;
+
+.Admin {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2xl;
+  padding: $space-3xl;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $space-lg;
+  }
+}
+
+.heading {
+  position: relative;
+
+  h4 {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: $space-md;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, $neon-cyan, $neon-magenta);
+      box-shadow: $glow-cyan;
+    }
+  }
+
+  .intro {
+    margin-top: $space-lg;
+    max-width: 640px;
+    color: $text-secondary;
+    line-height: 1.6;
+  }
+}
+
+.error-banner {
+  padding: $space-md $space-lg;
+  border: 1px solid rgba($neon-magenta, 0.4);
+  background: rgba($neon-magenta, 0.08);
+  color: $neon-magenta;
+  font-weight: 700;
+}
+
+.add-form {
+  display: flex;
+  gap: $space-md;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: $space-lg;
+  @include glass-morphism;
+}
+
+.email-input {
+  flex: 1;
+  min-width: 220px;
+  padding: $space-md;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background: $dark-bg-secondary;
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: 0.95rem;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $neon-cyan;
+    box-shadow: 0 0 0 3px rgba($neon-cyan, 0.18);
+  }
+}
+
+.role-select {
+  padding: $space-md;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background: $dark-bg-secondary;
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: 0.9rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn {
+  @include cyber-button;
+  font-size: 0.85rem;
+  padding: $space-md $space-lg;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.add-btn {
+  @include neon-border($neon-lime);
+  color: $neon-lime;
+
+  &::before {
+    background: rgba($neon-lime, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    @include no-jump-hover($neon-lime, 0.12);
+    box-shadow: $glow-lime;
+  }
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md $space-lg;
+  border: 1px solid rgba($neon-cyan, 0.15);
+  background: rgba($dark-bg-secondary, 0.4);
+  flex-wrap: wrap;
+}
+
+.user-email {
+  flex: 1;
+  min-width: 200px;
+  color: $text-primary;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.remove-btn {
+  @include neon-border($neon-magenta);
+  color: $neon-magenta;
+  padding: $space-sm $space-md;
+  font-size: 0.75rem;
+
+  &::before {
+    background: rgba($neon-magenta, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    @include no-jump-hover($neon-magenta, 0.12);
+  }
+}
+
+.empty-state {
+  padding: $space-lg;
+  color: $text-muted;
+  text-align: center;
+  border: 1px dashed rgba($neon-cyan, 0.2);
+}

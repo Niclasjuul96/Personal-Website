@@ -1,15 +1,8 @@
-import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, NgZone, inject } from '@angular/core';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ALLOWED_EMAILS, GOOGLE_CONFIG } from '../constants/google-config';
-
-function isEmailAllowed(email: string | null): boolean {
-  if (!email) {
-    return false;
-  }
-  const normalized = email.toLowerCase();
-  return ALLOWED_EMAILS.some((allowed) => allowed.toLowerCase() === normalized);
-}
+import { GOOGLE_CONFIG } from '../constants/google-config';
+import { AllowedUsersService } from './allowed-users.service';
 
 declare global {
   interface Window {
@@ -29,6 +22,8 @@ const STORAGE_KEYS = {
   providedIn: 'root',
 })
 export class GoogleAuthService {
+  private allowedUsers = inject(AllowedUsersService);
+
   private isInitialized$ = new BehaviorSubject<boolean>(false);
   private isAuthenticated$ = new BehaviorSubject<boolean>(false);
   private userName$ = new BehaviorSubject<string | null>(null);
@@ -43,8 +38,21 @@ export class GoogleAuthService {
   userPicture = this.userPicture$.asObservable();
   userEmail = this.userEmail$.asObservable();
 
-  /** True only when the logged-in Google account is in ALLOWED_EMAILS. */
-  isAllowed = this.userEmail$.pipe(map((email) => isEmailAllowed(email)));
+  /**
+   * Role lookups are driven by the live Firestore-backed allowlist
+   * (AllowedUsersService), not a compile-time constant — so these need
+   * to react to both "who's logged in" and "the allowlist just changed"
+   * (e.g. the owner added someone while this tab is open).
+   */
+  userRole = combineLatest([this.userEmail$, this.allowedUsers.users]).pipe(
+    map(([email]) => this.allowedUsers.getRole(email))
+  );
+
+  /** True for any account in the allowlist, regardless of role. */
+  isAllowed = this.userRole.pipe(map((role) => role !== null));
+
+  /** True only for the 'owner' role specifically. */
+  isOwner = this.userRole.pipe(map((role) => role === 'owner'));
 
   constructor(private ngZone: NgZone) {
     // Restoring a previous session is pure localStorage reading, so it
@@ -58,7 +66,11 @@ export class GoogleAuthService {
   }
 
   isCurrentlyAllowed(): boolean {
-    return isEmailAllowed(this.userEmail$.value);
+    return this.allowedUsers.getRole(this.userEmail$.value) !== null;
+  }
+
+  isCurrentlyOwner(): boolean {
+    return this.allowedUsers.getRole(this.userEmail$.value) === 'owner';
   }
 
   private initWhenReady(): void {
@@ -234,6 +246,9 @@ export class GoogleAuthService {
         }
         if (email) {
           localStorage.setItem(STORAGE_KEYS.userEmail, email);
+          // No-op after the allowlist has its first entry — only matters
+          // the very first time the bootstrap owner logs in.
+          this.allowedUsers.ensureOwnerBootstrapped(email, accessToken);
         }
       })
       .catch((error) => {

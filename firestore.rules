@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allowed-users list (who can access gated pages on the site).
+    // Read is public — this data is already effectively public today
+    // (baked into the compiled JS bundle), so no regression there.
+    // Write is restricted to the one hardcoded owner email, checked
+    // against the *Firebase Auth* session (bridged from the site's own
+    // Google login) — not anything the client claims about itself.
+    // Must match AllowedUsersService.BOOTSTRAP_OWNER_EMAIL exactly
+    // (case-insensitive compare on both sides).
+    match /allowedUsers/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
+    }
+
+    // Everything else stays denied by default (production mode).
+  }
+}

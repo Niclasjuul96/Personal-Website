@@ -5,12 +5,11 @@ import { GoogleAuthService } from '../services/google-auth.service';
 import { AllowedUsersService } from '../services/allowed-users.service';
 
 /**
- * Session restore itself is synchronous (localStorage-based), but the
- * allowlist it's checked against now lives in Firestore, which loads
- * asynchronously — so this waits for that initial load before deciding,
- * rather than risking a false "not allowed" on the very first check.
+ * Same async-wait reasoning as allowedGuard — the allowlist (and
+ * therefore role info) loads from Firestore asynchronously, so this
+ * waits for that initial load before deciding.
  */
-export const allowedGuard: CanActivateFn = () => {
+export const ownerGuard: CanActivateFn = () => {
   const googleAuth = inject(GoogleAuthService);
   const allowedUsers = inject(AllowedUsersService);
   const router = inject(Router);
@@ -18,6 +17,6 @@ export const allowedGuard: CanActivateFn = () => {
   return allowedUsers.loaded.pipe(
     filter((loaded) => loaded),
     take(1),
-    map(() => googleAuth.isCurrentlyAllowed() || router.createUrlTree(['/']))
+    map(() => googleAuth.isCurrentlyOwner() || router.createUrlTree(['/']))
   );
 };

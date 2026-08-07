@@ -13,5 +13,15 @@
         Your personal budget tracker &mdash; import transactions, sync to Google Sheets, and browse your budget by year.
       </p>
     </a>
+
+    @if (isOwner | async) {
+      <a class="app-card" routerLink="/dashboard/admin">
+        <div class="app-icon"><i class="fas fa-user-shield"></i></div>
+        <div class="app-name">Manage Access</div>
+        <p class="app-description">
+          Add or remove who's allowed to see gated pages on the site, and set their role.
+        </p>
+      </a>
+    }
   </section>
 </div>

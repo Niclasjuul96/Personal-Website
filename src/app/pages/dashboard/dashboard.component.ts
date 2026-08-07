@@ -13,6 +13,7 @@ export class DashboardComponent implements OnInit {
   private googleAuth = inject(GoogleAuthService);
 
   userName = this.googleAuth.userName;
+  isOwner = this.googleAuth.isOwner;
 
   ngOnInit(): void {
     document.title = 'Dashboard | Niclas Schæffer Portfolio';
