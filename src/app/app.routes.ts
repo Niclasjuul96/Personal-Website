@@ -6,6 +6,7 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { CvComponent } from './pages/cv/cv.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { allowedGuard } from './guards/allowed.guard';
+import { ownerGuard } from './guards/owner.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,6 +20,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/dashboard/economic/economic.component').then((m) => m.EconomicComponent),
     canActivate: [allowedGuard]
+  },
+  {
+    path: 'dashboard/admin',
+    loadComponent: () =>
+      import('./pages/dashboard/admin/admin.component').then((m) => m.AdminComponent),
+    canActivate: [ownerGuard]
   },
   { path: '**', redirectTo: '' }
 ];

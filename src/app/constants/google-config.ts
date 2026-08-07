@@ -43,7 +43,3 @@ export const SHEET_CONFIG = {
   ],
 };
 
-// Google accounts allowed to see gated pages (Dashboard, E-conomic).
-// Anyone can sign in, but only these emails get past the allowed guard.
-// Add/remove emails here and redeploy to change who has access.
-export const ALLOWED_EMAILS = ['Niclasschaeffer96@gmail.com'];

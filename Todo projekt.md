@@ -64,6 +64,36 @@ that ISN'T already protected by Google's own ACLs.
       soon card~~ — **done 2026-08-06, see dedicated section below.**
 - [ ] Longer-term/maybe: a real backend if any future feature needs
       server-side authorization instead of relying on Google's own ACLs.
+- [ ] **Decided 2026-08-07, not started: split login into two OAuth
+      steps.** Real bug found while testing with a second account: the
+      site's OAuth Client ID requests *all* scopes at once, including
+      Sheets/Drive (Google's "sensitive"/"restricted" tiers) — so Google
+      itself blocks anyone not manually added as a "Test user" in the
+      OAuth consent screen from completing login at all, before the
+      app's own `ALLOWED_USERS` check ever runs. This directly breaks
+      the original intent ("anyone can log in, gets a friendly 'No
+      access' badge if not allowed") — right now strangers can't even
+      log in to see that badge.
+
+      **Decided fix:** split the one token request into two. Request
+      only basic scopes (email/profile) for the site's own login —
+      publishable with no verification friction since it's not
+      sensitive. Request Sheets/Drive scopes as a *second*, separate
+      consent step (Google's "incremental authorization" pattern) only
+      when an allowed user actually opens `/dashboard/economic`. Site
+      login becomes truly open again; only the smaller group who use
+      E-conomic ever hits the heavier scopes/test-user gate.
+
+      Real architectural change to `GoogleAuthService`'s token request
+      flow (one `initTokenClient`/`requestAccessToken` call becomes two,
+      triggered at different times) — not a quick tweak, deliberately
+      not started yet. Next session.
+
+      Considered alternatives, not chosen: full Google app verification
+      (restores the same thing, but a real process — security assessment
+      for the restricted `drive` scope — overkill for a personal site);
+      leaving it as-is (simplest, but "anyone can log in" stays false,
+      just you + manually-added test users).
 - [x] ~~Clone the other side projects down into the local coding folder~~
       — **done 2026-08-06.** Cloned: `Chat-App`, `NoteEase`,
       `PasswordGenerator`, `SimonGame`. **`KanBan` was not cloned** —
@@ -210,23 +240,123 @@ who never open it never download that weight) and guarded by the same
   table rendering flow with real transaction data. Worth a full pass
   through that soon.
 
-## Planned: roles (owner vs. allowed) — idea captured 2026-08-06, not built yet
+## Done: roles (owner vs. allowed) — built 2026-08-07
 
-Flat `ALLOWED_EMAILS` isn't enough once there's a feature only the owner
-should touch. Two roles needed:
+`ALLOWED_EMAILS: string[]` is gone, replaced by
+`ALLOWED_USERS: AllowedUser[]` in `google-config.ts`, where
+`AllowedUser = { email: string; role: Role }` and
+`Role = 'owner' | 'member'`. Currently just Niclas as `'owner'` — no
+`'member'` accounts exist yet, but the shape supports them today.
 
-- **Owner** (Niclas only) — sees everything a regular allowed user sees,
-  PLUS an admin capability: toggle which projects show as "live" on the
-  public site vs. hidden (e.g. still in testing).
-- **Allowed / member** (anyone on the list who isn't the owner) — sees
-  gated apps like E-conomic, but NOT the project live/hidden toggle or any
-  other owner-only admin controls.
+**Built with adaptability as the explicit goal, per Niclas's ask:**
 
-Likely shape (not decided/built): evolve `ALLOWED_EMAILS: string[]` into
-something like `ALLOWED_USERS: { email: string; role: 'owner' | 'member' }[]`,
-with `isOwnerRole` (role === 'owner') and `isAllowed` (any role present)
-derived from it — same pattern as the current `isEmailAllowed` helper in
-`google-auth.service.ts`, just role-aware.
+- **One source of truth.** A single `getUserRole(email): Role | null`
+  helper in `google-auth.service.ts` looks up `ALLOWED_USERS`; every
+  other check (`isEmailAllowed`, `isEmailOwner`) derives from it instead
+  of re-implementing the lookup. Adding a role check later (e.g.
+  `isEmailEditor`) means writing one line that calls `getUserRole`, not
+  duplicating the array-search logic again.
+- **`Role` is a plain string union**, not an enum or a hardcoded pair of
+  booleans — adding a third role is a one-line type change
+  (`'owner' | 'member' | 'editor'`), and TypeScript will then flag every
+  `switch` on `Role` that doesn't handle the new case.
+- **Both the specific and the general are exposed.** `GoogleAuthService`
+  now has `userRole` (the actual role, or `null`) alongside the
+  convenience `isAllowed`/`isOwner` observables (and matching
+  `isCurrentlyAllowed()`/`isCurrentlyOwner()` sync methods). Consumers
+  that only care about "is this the owner" use `isOwner`; a future
+  feature that needs to distinguish more roles can read `userRole`
+  directly instead of waiting for a new convenience property to be added
+  for it.
+
+**Deliberately not built yet:** no owner-only UI exists to actually gate
+with `isOwner` — that arrives with the project-visibility toggle, which
+needs the Firebase backend (see below) to work across visitors, not just
+the owner's own browser. This was purely the access-control groundwork,
+ready for that feature to consume once built.
+
+Verified via the live service instance in the browser: owner email →
+`isAllowed: true, isOwner: true`; a temporary test `'member'` account →
+`isAllowed: true, isOwner: false`; an unlisted email → both `false` —
+checked against both the sync methods and the observable streams
+(`userRole`/`isAllowed`/`isOwner`) that templates would actually bind to.
+Also confirmed no regression: the existing "Access granted" badge and
+Dashboard nav link still work correctly for a member account.
+
+## Done: Firebase backend + live-editable allowlist admin UI — built 2026-08-07
+
+The allowlist moved off the compile-time `ALLOWED_USERS` constant entirely
+and now lives in **Firestore**, editable from a real in-app admin page at
+`/dashboard/admin` (owner-only) — no more code-and-redeploy to change who
+has access. This also unblocked what the roadmap always said it would:
+the per-project visibility toggle below can now use the same Firestore
+project instead of needing its own setup.
+
+**Firebase project:** a new, separate project (`personal-website-8655e`,
+Stockholm/`europe-north2`, Standard edition Firestore), deliberately not
+sharing Chat-App's `chat-app-c1cbc` — matches the earlier leaning in this
+doc. Firebase Auth's Google provider has the site's existing OAuth Client
+ID (`520118713358-...`, from the separate "E-Conomic" Google Cloud
+project) added under "whitelist client IDs from external projects" — this
+is what lets the site reuse its *existing* Google login to also establish
+a Firebase Auth session, instead of a second, separate sign-in popup.
+
+**Key files:**
+- `src/app/constants/firebase-config.ts` — the Firebase Web SDK config
+- `src/app/services/firebase-app.ts` — shared `initializeApp()` singleton (Firebase throws if called twice)
+- `src/app/services/allowed-users.service.ts` — the real source of truth now
+- `src/app/pages/dashboard/admin/` — the admin UI
+- `src/app/guards/owner.guard.ts` — new, guards `/dashboard/admin`
+- `firestore.rules` — kept in the repo as the source of truth for what's published in the console (no Firebase CLI/automated deploy set up, so this doesn't auto-deploy — has to be manually pasted into the console's Rules tab when changed)
+
+**The chicken-and-egg bootstrap problem, and how it's solved:** Firestore
+starts empty, but the admin UI is gated behind `isOwner` — which comes
+from Firestore data. So how does the very first owner record ever get
+created? Solved with a hardcoded `BOOTSTRAP_OWNER_EMAIL` constant in
+`allowed-users.service.ts` (`Niclasschaeffer96@gmail.com`) that exists
+**outside** Firestore on purpose — it's the root of trust. On every
+login, `ensureOwnerBootstrapped()` checks: if the allowlist is still
+empty AND this is that exact email, self-write the first owner record.
+After that first entry exists, this is permanently a no-op. The same
+email is *also* hardcoded directly in the Firestore security rule (not
+derived from Firestore data — same reasoning, avoids a rule that needs
+data that needs the rule). **Consequence worth knowing:** if this one
+email's own entry is ever deleted while other entries remain, they lose
+admin access permanently through the UI (bootstrap only fires on a fully
+*empty* list) — the admin UI's "Remove" button is deliberately disabled
+for this specific email to prevent that; removing them would need
+manually deleting the doc via Firebase Console instead.
+
+**Security model:** reads are public (`allow read: if true`) — this data
+was already effectively public before (compiled into the JS bundle), so
+no regression. Writes require a Firebase Auth session whose token email
+matches the hardcoded owner email exactly — enforced by Firestore itself,
+not by the app's UI. `AllowedUsersService.ensureFirebaseAuth()` lazily
+signs into Firebase Auth (via `signInWithCredential` using the site's
+already-obtained Google access token) only when a write is actually
+attempted, so regular visitors/members never pay that cost.
+
+**A real bug found and fixed while testing:** the Firestore listener
+(`onSnapshot`) failed with `permission-denied` on every fresh page load —
+even though the exact same call succeeded when triggered manually after
+the page had fully loaded, and even though `getDocs` (one-time read)
+always worked fine from the start. Root cause: subscribing synchronously
+in the service constructor raced Firestore's own internal client
+startup — a request fired that early can bounce off a fully public rule,
+and unlike transient network errors, Firestore doesn't auto-retry a
+failed listener. Fixed by deferring the subscription one tick
+(`setTimeout(..., 0)`), same pattern already used in `GoogleAuthService`
+for an analogous startup race. Took real back-and-forth to isolate
+(initially looked exactly like ordinary rules-propagation delay, which
+it wasn't — confirmed by a temporary debug method proving `getDocs`
+succeeded while `onSnapshot` from the constructor still failed, at the
+same moment, against the same rules).
+
+**What's actually been verified vs. what still needs a real test:**
+- [x] Firestore read connectivity, rules, and the constructor timing fix — confirmed via the live service instance in-browser
+- [x] Guard behavior — owner reaches `/dashboard/admin`, non-owner gets redirected to `/`
+- [x] The bootstrap already happened for real — Niclas logged in for real at some point while testing E-conomic earlier, and the owner record was correctly self-created (`niclasschaeffer96@gmail.com` / `owner`), confirming the Firebase Auth bridge and write path both work end-to-end
+- [ ] **Not yet tested: actually adding/removing/changing a role for someone via the admin UI.** This needs a real, currently-valid Google access token to bridge Firebase Auth for the write — couldn't be simulated in this session the same way reads could. Try adding a test email (even a throwaway one) via `/dashboard/admin` next time you're logged in for real, and confirm it shows up immediately and that `isAllowed` actually works for that account.
 
 ### Related idea: per-project toggle isn't just live/hidden — needs a third "coming soon" state
 
@@ -278,13 +408,13 @@ a server key is; real protection comes from Firestore/Storage security
 rules, same "public config, rules do the real gating" shape as this
 site's own `ALLOWED_EMAILS`/Google-ACL approach).
 
-Leaning towards: **a separate, dedicated Firebase project for
-Personal-Website**, not reusing `chat-app-c1cbc` — that project is
-purpose-built and named for the chat app specifically, and mixing in
-unrelated dashboard/allowlist/project-toggle data would just be
-confusing to manage later. Not fully decided, but the Chat-App setup
-gives a concrete template to copy (`firebase.js` shape, `firebase`
-npm package, Firestore for data) rather than designing from scratch.
+**Settled 2026-08-07:** went with the separate, dedicated project as
+leaned towards here — `personal-website-8655e`, not `chat-app-c1cbc`.
+Firestore is live and already backing the allowlist (see the "Done:
+Firebase backend" section above). The project-toggle feature described
+above can now be built on this same Firestore instance — the backend
+setup this section was waiting on is done, this specific feature just
+hasn't been built yet.
 
 ## Planned: embed minor showcase projects via iframe — idea captured 2026-08-06, not built yet
 
@@ -348,18 +478,21 @@ they're cloned locally):
 
 ## Open questions to revisit later
 
-- Do we ever want more than a hardcoded allowlist (e.g. a real "invite a
-  user" flow)? Explicitly decided against a live admin UI for now — would
-  need a backend.
+- ~~Do we ever want more than a hardcoded allowlist?~~ — resolved
+  2026-08-07, see "Done: Firebase backend" section above. There's a real
+  admin UI now; the only remaining hardcoded piece is the one bootstrap
+  owner email, by design.
 - Roles: confirm the two-role model (owner/member) is enough, or whether
   more granularity will be needed later (e.g. per-project permissions
   instead of a single member role).
-- Project toggle: config-file redeploy vs. real backend — see above.
-  Deciding this also settles the live-email-allowlist question from
-  earlier, since both need the same infrastructure. Also now needs to
-  cover "live" state for iframe-embedded minor projects, not just
-  E-conomic.
+- Project toggle: the backend question is resolved (Firestore, same
+  project as the allowlist) — just needs the actual feature built now.
+  Also needs to cover "live" state for iframe-embedded minor projects,
+  not just E-conomic.
 - Per minor project once deployed: confirm its host doesn't send
   `X-Frame-Options`/CSP headers that would block embedding it here.
 - ~~Project toggle states~~ — resolved, see "coming soon" state note above
   (Live/Off switch + dependent Coming-soon checkbox).
+- **New from this session:** admin UI's actual add/remove/change-role
+  flow hasn't been tested with a real write yet — see the checklist in
+  the "Done: Firebase backend" section above.

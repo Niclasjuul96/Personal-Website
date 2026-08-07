@@ -1,0 +1,60 @@
+<div class="Admin">
+  <div class="heading">
+    <h4>Manage Access</h4>
+    <div class="underline"></div>
+    <p class="intro">
+      Anyone can sign in with Google, but only accounts listed here see gated pages like
+      E-conomic. Add an email and pick a role — changes take effect immediately, no redeploy needed.
+    </p>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  }
+
+  <section class="add-form">
+    <input
+      type="email"
+      placeholder="name@example.com"
+      [(ngModel)]="newEmail"
+      (keyup.enter)="addUser()"
+      class="email-input"
+    />
+    <select [(ngModel)]="newRole" class="role-select">
+      <option value="member">Member</option>
+      <option value="owner">Owner</option>
+    </select>
+    <button class="btn add-btn" (click)="addUser()" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Adding...' : 'Add' }}
+    </button>
+  </section>
+
+  <section class="user-list">
+    @for (user of users | async; track user.id) {
+      <div class="user-row">
+        <span class="user-email">{{ user.email }}</span>
+
+        <select
+          class="role-select"
+          [ngModel]="user.role"
+          (ngModelChange)="changeRole(user.email, $event)"
+          [disabled]="isBootstrapOwner(user.email)"
+        >
+          <option value="member">Member</option>
+          <option value="owner">Owner</option>
+        </select>
+
+        <button
+          class="btn remove-btn"
+          (click)="removeUser(user.email)"
+          [disabled]="isBootstrapOwner(user.email) || removingEmail === user.email"
+          [title]="isBootstrapOwner(user.email) ? 'This account is the permanent site owner and can\'t be removed here' : 'Remove access'"
+        >
+          {{ removingEmail === user.email ? 'Removing...' : 'Remove' }}
+        </button>
+      </div>
+    } @empty {
+      <p class="empty-state">No one's been added yet.</p>
+    }
+  </section>
+</div>
