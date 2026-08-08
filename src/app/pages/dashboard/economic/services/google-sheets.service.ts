@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { GoogleAuthService } from '../../../../services/google-auth.service';
 import { SHEET_CONFIG } from '../../../../constants/google-config';
+import { BOOTSTRAP_OWNER_EMAIL } from '../../../../services/allowed-users.service';
 import { TransactionDetail, BudgetRow } from '../models/types';
 import { BehaviorSubject } from 'rxjs';
 
@@ -17,27 +18,69 @@ export class GoogleSheetsService {
   private authService = inject(GoogleAuthService);
   private sheetId: string | null = null;
   private sheetId$ = new BehaviorSubject<string | null>(null);
+  private currentEmail: string | null = null;
 
   sheetIdChanged = this.sheetId$.asObservable();
 
   constructor() {
-    this.loadSheetId();
+    // Sheet ID must be scoped per Google account, not a single global
+    // key — otherwise switching accounts in the same browser leaks
+    // whichever account linked a sheet first into every other account's
+    // session (a real bug: a second account inherited the first
+    // account's budget sheet). Reload whenever the logged-in email
+    // changes (login, logout, or switching accounts).
+    this.authService.userEmail.subscribe((email) => this.onUserChanged(email));
   }
 
   /**
-   * Load sheet ID from localStorage (user's sheet)
+   * Per-account storage key. Returns null when logged out — there's no
+   * sheet to load/save without a known account to scope it to.
    */
-  private loadSheetId(): void {
-    this.sheetId = localStorage.getItem(SHEET_CONFIG.STORAGE_KEY);
-    this.sheetId$.next(this.sheetId);
+  private getStorageKey(email: string | null): string | null {
+    return email ? `${SHEET_CONFIG.STORAGE_KEY}_${email.toLowerCase()}` : null;
+  }
+
+  private onUserChanged(email: string | null): void {
+    this.currentEmail = email;
+
+    if (!email) {
+      this.sheetId = null;
+      this.sheetId$.next(null);
+      return;
+    }
+
+    const key = this.getStorageKey(email)!;
+    let stored = localStorage.getItem(key);
+
+    // One-time migration: before per-account scoping existed, the sheet
+    // ID lived under one unscoped global key. Only carry it over for the
+    // bootstrap owner (the account that was actually using it) — never
+    // for any other account, since that's exactly the leak this fix is
+    // for.
+    if (!stored && email.toLowerCase() === BOOTSTRAP_OWNER_EMAIL.toLowerCase()) {
+      const legacy = localStorage.getItem(SHEET_CONFIG.STORAGE_KEY);
+      if (legacy) {
+        localStorage.setItem(key, legacy);
+        localStorage.removeItem(SHEET_CONFIG.STORAGE_KEY);
+        stored = legacy;
+      }
+    }
+
+    this.sheetId = stored;
+    this.sheetId$.next(stored);
   }
 
   /**
-   * Save sheet ID to localStorage
+   * Save sheet ID to localStorage, scoped to the current account.
    */
   private saveSheetId(id: string): void {
+    const key = this.getStorageKey(this.currentEmail);
+    if (!key) {
+      console.error('[GoogleSheets] Cannot save sheet ID: no authenticated user');
+      return;
+    }
     this.sheetId = id;
-    localStorage.setItem(SHEET_CONFIG.STORAGE_KEY, id);
+    localStorage.setItem(key, id);
     this.sheetId$.next(id);
   }
 
@@ -56,11 +99,14 @@ export class GoogleSheetsService {
   }
 
   /**
-   * Clear sheet ID
+   * Clear sheet ID for the current account
    */
   clearSheetId(): void {
+    const key = this.getStorageKey(this.currentEmail);
     this.sheetId = null;
-    localStorage.removeItem(SHEET_CONFIG.STORAGE_KEY);
+    if (key) {
+      localStorage.removeItem(key);
+    }
     this.sheetId$.next(null);
   }
 
