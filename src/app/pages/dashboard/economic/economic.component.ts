@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { GoogleAuthService } from '../../../services/google-auth.service';
 import { GoogleSheetsService } from './services/google-sheets.service';
 import { CsvParserService } from './services/csv-parser.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-economic',
@@ -23,6 +23,12 @@ export class EconomicComponent implements OnInit {
   sheetsService = inject(GoogleSheetsService);
   csvParser = inject(CsvParserService);
   cdr = inject(ChangeDetectorRef);
+
+  /** Drives the connect-Sheets gate UI; the real state lives in authService.hasSheetsAccess. */
+  sheetsAccessStatus$ = new BehaviorSubject<'idle' | 'requesting' | 'denied'>('idle');
+
+  /** True while transactions are being fetched from Google Sheets (initial load, sheet switch, or account switch). */
+  isLoadingData$ = new BehaviorSubject<boolean>(false);
 
   allTransactions: TransactionDetail[] = [];
   incomeData: BudgetRow[] = [];
@@ -41,27 +47,61 @@ export class EconomicComponent implements OnInit {
   syncStatus$ = new BehaviorSubject<'idle' | 'syncing' | 'success' | 'error'>('idle');
 
   ngOnInit(): void {
-    // Load transactions when user is authenticated
-    this.authService.isAuthenticated.subscribe(async (isAuthenticated) => {
-      if (isAuthenticated) {
-        try {
-          await this.loadInitialData();
-        } catch (error) {
-          console.error('Failed to load initial data:', error);
-        }
+    // Loading transaction data needs three things to all be true: basic
+    // login, the Sheets/Drive scopes (requested separately, see
+    // connectSheets()), and a linked sheet ID. These used to be two
+    // separate subscriptions (auth+access state, and sheet ID changes)
+    // racing independently — whichever settled last would only trigger a
+    // reload if the *other* one had already happened to resolve by then,
+    // so on a live account/sheet switch the load could silently no-op
+    // and never retry (a page refresh "fixed" it only because a full
+    // reload restores everything synchronously from localStorage in one
+    // go, sidestepping the race). Combining all three into one stream
+    // means the load fires exactly once all three are actually ready,
+    // regardless of which one resolves last.
+    combineLatest([
+      this.authService.isAuthenticated,
+      this.authService.hasSheetsAccess,
+      this.sheetsService.sheetIdChanged,
+    ]).subscribe(async ([isAuthenticated, hasSheetsAccess, sheetId]) => {
+      if (!isAuthenticated || !hasSheetsAccess || !sheetId) {
+        // Not ready yet, or switched to an account/sheet with nothing
+        // linked — clear out whatever was previously displayed so a
+        // different account's budget doesn't linger on screen.
+        this.resetBudgetData();
+        return;
       }
-    });
 
-    // Reload transactions when sheet is changed
-    this.sheetsService.sheetIdChanged.subscribe(async (sheetId) => {
-      if (sheetId) {
-        try {
-          await this.loadInitialData();
-        } catch (error) {
-          console.error('Failed to load data after sheet change:', error);
-        }
+      this.isLoadingData$.next(true);
+      try {
+        await this.loadInitialData();
+      } catch (error) {
+        console.error('Failed to load initial data:', error);
+      } finally {
+        this.isLoadingData$.next(false);
       }
     });
+  }
+
+  private resetBudgetData(): void {
+    this.allTransactions = [];
+    this.incomeData = [];
+    this.expenseData = [];
+    this.disposableIncomeData = [];
+    this.availableYears = [];
+    this.selectedYear = null;
+    this.selectedDetails = null;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Requests the Sheets/Drive scopes as a second consent step — called
+   * from a click in the template so the OAuth popup isn't blocked.
+   */
+  async connectSheets(): Promise<void> {
+    this.sheetsAccessStatus$.next('requesting');
+    const granted = await this.authService.requestSheetsAccess();
+    this.sheetsAccessStatus$.next(granted ? 'idle' : 'denied');
   }
 
   /**
@@ -314,10 +354,12 @@ export class EconomicComponent implements OnInit {
    * Sync transactions to Google Sheets
    */
   syncTransactionsToSheet(transactions: TransactionDetail[]): void {
-    const isAuth = this.authService.isCurrentlyAuthenticated();
+    const canSync =
+      this.authService.isCurrentlyAuthenticated() &&
+      this.authService.isCurrentlySheetsAccessGranted();
 
-    if (!isAuth) {
-      console.warn('[Economic] User not authenticated. Skipping sync.');
+    if (!canSync) {
+      console.warn('[Economic] Not authenticated or missing Sheets access. Skipping sync.');
       return;
     }
 
