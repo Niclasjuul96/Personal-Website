@@ -19,8 +19,10 @@ tracker), more later.
     merge the two anyway. Registered origins: `http://localhost:4200` and
     `https://niclasjuul.dk`.
   - Session persisted in `localStorage` (access token, name, picture, email).
-  - `GOOGLE_CONFIG.SCOPES` now includes Sheets + Drive scopes (not just
-    identity) — extended when E-conomic was merged in, see below.
+  - `GOOGLE_CONFIG.SCOPES` (single list, all requested at once) has since
+    been superseded — as of 2026-08-08 it's split into `BASIC_SCOPES`
+    (site login) and `SHEETS_SCOPES` (requested separately, only for
+    E-conomic). See "Done: split login into two OAuth steps" below.
 - `ALLOWED_EMAILS` allowlist (`src/app/constants/google-config.ts`) gates
   access to owner-only pages. Anyone can log in; only listed emails see
   gated content. Add/remove emails there and redeploy to change access —
@@ -64,36 +66,8 @@ that ISN'T already protected by Google's own ACLs.
       soon card~~ — **done 2026-08-06, see dedicated section below.**
 - [ ] Longer-term/maybe: a real backend if any future feature needs
       server-side authorization instead of relying on Google's own ACLs.
-- [ ] **Decided 2026-08-07, not started: split login into two OAuth
-      steps.** Real bug found while testing with a second account: the
-      site's OAuth Client ID requests *all* scopes at once, including
-      Sheets/Drive (Google's "sensitive"/"restricted" tiers) — so Google
-      itself blocks anyone not manually added as a "Test user" in the
-      OAuth consent screen from completing login at all, before the
-      app's own `ALLOWED_USERS` check ever runs. This directly breaks
-      the original intent ("anyone can log in, gets a friendly 'No
-      access' badge if not allowed") — right now strangers can't even
-      log in to see that badge.
-
-      **Decided fix:** split the one token request into two. Request
-      only basic scopes (email/profile) for the site's own login —
-      publishable with no verification friction since it's not
-      sensitive. Request Sheets/Drive scopes as a *second*, separate
-      consent step (Google's "incremental authorization" pattern) only
-      when an allowed user actually opens `/dashboard/economic`. Site
-      login becomes truly open again; only the smaller group who use
-      E-conomic ever hits the heavier scopes/test-user gate.
-
-      Real architectural change to `GoogleAuthService`'s token request
-      flow (one `initTokenClient`/`requestAccessToken` call becomes two,
-      triggered at different times) — not a quick tweak, deliberately
-      not started yet. Next session.
-
-      Considered alternatives, not chosen: full Google app verification
-      (restores the same thing, but a real process — security assessment
-      for the restricted `drive` scope — overkill for a personal site);
-      leaving it as-is (simplest, but "anyone can log in" stays false,
-      just you + manually-added test users).
+- [x] ~~Decided 2026-08-07, not started: split login into two OAuth
+      steps.~~ — **built 2026-08-08, see dedicated section below.**
 - [x] ~~Clone the other side projects down into the local coding folder~~
       — **done 2026-08-06.** Cloned: `Chat-App`, `NoteEase`,
       `PasswordGenerator`, `SimonGame`. **`KanBan` was not cloned** —
@@ -239,6 +213,149 @@ who never open it never download that weight) and guarded by the same
 - **Still not exercised:** the full CSV import → Sheets sync → budget
   table rendering flow with real transaction data. Worth a full pass
   through that soon.
+
+## Done: split login into two OAuth steps (incremental authorization) — built 2026-08-08
+
+Fixes the real bug found 2026-08-07: the site's OAuth Client ID was
+requesting *all* scopes at once, including Sheets/Drive (Google's
+"sensitive"/"restricted" tiers) — so Google blocked anyone not manually
+added as a "Test user" from completing login at all, before the app's own
+`ALLOWED_USERS` check ever ran. That broke the original intent ("anyone
+can log in, gets a friendly 'No access' badge if not allowed").
+
+**What changed:**
+
+- `google-config.ts`: `GOOGLE_CONFIG.SCOPES` split into `BASIC_SCOPES`
+  (`userinfo.email`/`userinfo.profile` — not sensitive) and
+  `SHEETS_SCOPES` (`spreadsheets`/`drive` — sensitive/restricted).
+- `GoogleAuthService`:
+  - `initTokenClient` now only requests `BASIC_SCOPES` — this is what
+    `login()` (the header's "Sign in with Google" button) uses, so site
+    login itself no longer touches the sensitive tier at all.
+  - New `requestSheetsAccess(): Promise<boolean>` calls
+    `tokenClient.requestAccessToken({ scope: BASIC + SHEETS scopes })` —
+    Google's token client supports overriding `scope` per-request
+    (confirmed against Google's own incremental-authorization docs), and
+    folds in previously granted scopes automatically, so this is a
+    genuine second consent step, not a full re-login.
+  - Tracks granted scopes from `response.scope` in a new
+    `website_google_granted_scopes` localStorage key, exposed as
+    `hasSheetsAccess` (observable) / `isCurrentlySheetsAccessGranted()`
+    (sync), cleared on logout alongside the rest of the session.
+- `EconomicComponent`/`economic.component.html`: `/dashboard/economic`
+  now shows a gate card ("Connect Google Sheets & Drive") instead of the
+  budget UI until `hasSheetsAccess` is true. A button click calls
+  `connectSheets()` → `requestSheetsAccess()` — deliberately gated behind
+  a real click, not fired automatically on route entry, since browsers
+  block OAuth popups that aren't triggered by a user gesture. Restyled to
+  match the existing cyberpunk glass-morphism cards
+  (`.sheets-gate`/`.connect-button` in `economic.component.scss`, reusing
+  `glass-morphism`/`neon-glow` mixins and the neon-cyan action color
+  already used elsewhere on this page).
+- `syncTransactionsToSheet` now checks both
+  `isCurrentlyAuthenticated()` AND `isCurrentlySheetsAccessGranted()`
+  before syncing (defensive — the template gate should already prevent
+  reaching this UI without access, but the service-level check doesn't
+  rely on that).
+
+**Verified:** `ng build` type-checks cleanly with these changes (no new
+TS/template errors — confirmed by diffing against a `git stash` build of
+`master`, which already fails the *same* way from pre-existing SCSS
+bundle-budget overages in ~10 unrelated files, so that failure isn't
+something this change introduced or something to fix here). Smoke-tested
+in a live dev server: app loads with no console errors, unauthenticated
+`/dashboard/economic` still correctly redirects home via `allowedGuard`.
+
+**Confirmed live 2026-08-08, tested with 2 real Google accounts:**
+- [x] Fresh site login only prompts for the basic identity scopes (no
+      Sheets/Drive in that first consent screen).
+- [x] A second, non-test-user Google account can now complete basic site
+      login (the actual bug this was meant to fix) — previously it was
+      blocked outright by Google before even reaching the app.
+- [x] Opening `/dashboard/economic` as an allowed user shows the new
+      "Connect Google Sheets & Drive" gate, and clicking it prompts a
+      *second* consent screen for just Sheets/Drive.
+- [x] After granting, the budget UI loads/syncs normally — confirms the
+      resulting access token actually carries both scope tiers.
+- [x] Each account correctly sees its own budget (see the per-account
+      sheet-scoping bug + fix below, found during this same testing pass).
+
+**One known rough edge, accepted for now:** anyone who granted the old
+all-at-once scopes before this change has an access token but no
+`website_google_granted_scopes` entry yet (that key didn't exist before),
+so they'll see the new gate once and need to click through it a single
+time even though Google may already consider Sheets/Drive granted for
+their account. Not worth special-casing for a personal site with a
+handful of users.
+
+### Real bug found immediately after, from actually testing with 2 accounts — fixed 2026-08-08
+
+While testing the two-step OAuth flow above with a second Google account,
+Niclas found: after granting Sheets/Drive access on the 2nd account, it
+came in **already pointing at the 1st account's budget sheet** — same
+browser, wrong account, wrong sheet.
+
+**Root cause:** `GoogleSheetsService` stored the linked spreadsheet ID
+under one single, unscoped localStorage key
+(`SHEET_CONFIG.STORAGE_KEY` = `'e_conomic_sheet_id'`) — not tied to which
+Google account is currently logged in at all, and never cleared on
+logout. So whichever account linked a sheet first "wins" for every
+account that ever logs into that browser afterward.
+
+**Fix, in [google-sheets.service.ts](src/app/pages/dashboard/economic/services/google-sheets.service.ts):**
+the storage key is now scoped per account —
+`e_conomic_sheet_id_<lowercased-email>` — computed from
+`GoogleAuthService.userEmail`. The service subscribes to `userEmail` and
+reloads the correct account's sheet ID (or `null`, if that account hasn't
+linked one yet) on every login/logout/account-switch, instead of loading
+the sheet ID once at construction time.
+
+**Migration for the existing owner:** the already-linked sheet under the
+old global key is carried over automatically, but **only** for
+`BOOTSTRAP_OWNER_EMAIL` (the one real owner account this was already
+correctly working for) — deliberately not for any other account, since
+migrating it unconditionally to "whichever email logs in and finds no
+scoped key yet" would just reproduce the exact same leak for the next
+new account. Any non-owner account that had accidentally inherited the
+owner's sheet before this fix starts fresh with no sheet linked, which is
+correct — they were never supposed to have it.
+
+**Confirmed live 2026-08-08:** tested with both real accounts — each one
+now correctly shows its own linked sheet, no cross-account leak.
+
+### Follow-up: data didn't always load without a manual refresh — fixed 2026-08-08
+
+Also found during the same 2-account testing pass: the budget table
+sometimes didn't populate on its own after logging in / switching
+accounts — needed a page refresh or reselecting the sheet to force it in.
+
+**Root cause:** `EconomicComponent` had two *separate* subscriptions
+racing independently — one on `[isAuthenticated, hasSheetsAccess]`, one
+on `sheetsService.sheetIdChanged`. Whichever fired first only triggered a
+load if the other had *already* resolved by then; if not, the load
+silently no-op'd (null sheet ID) and nothing retried it. A full page
+refresh "fixed" it only because a cold reload restores everything
+synchronously from `localStorage` in the right order, sidestepping the
+race entirely — which is also why reselecting the sheet worked as a
+manual retry (it re-fires that one stream).
+
+**Fix, in [economic.component.ts](src/app/pages/dashboard/economic/economic.component.ts):**
+merged all three conditions (`isAuthenticated`, `hasSheetsAccess`,
+`sheetId`) into a single `combineLatest`, so the load fires exactly once
+all three are actually ready, regardless of which one resolves last.
+Added a `resetBudgetData()` clear for whenever any of them isn't ready
+(e.g. switching to an account with no linked sheet yet), so a previous
+account's budget can't linger on screen.
+
+**Also added while here:** an `isLoadingData$` state (set around the
+`loadInitialData()` call) driving a "Loading your budget data from Google
+Sheets..." status bar plus a spinner variant of the empty-state card —
+requested right after, since until then there was no visual feedback that
+a fetch was in flight at all.
+
+**Confirmed live 2026-08-08:** tested switching between both real
+accounts repeatedly — budget table now loads reliably without needing a
+refresh or reselect, and the loading indicator shows/clears correctly.
 
 ## Done: roles (owner vs. allowed) — built 2026-08-07
 
