@@ -16,6 +16,7 @@ const STORAGE_KEYS = {
   userName: 'website_google_user_name',
   userPicture: 'website_google_user_picture',
   userEmail: 'website_google_user_email',
+  grantedScopes: 'website_google_granted_scopes',
 };
 
 @Injectable({
@@ -29,14 +30,21 @@ export class GoogleAuthService {
   private userName$ = new BehaviorSubject<string | null>(null);
   private userPicture$ = new BehaviorSubject<string | null>(null);
   private userEmail$ = new BehaviorSubject<string | null>(null);
+  private hasSheetsAccess$ = new BehaviorSubject<boolean>(false);
   private tokenClient: any = null;
   private initAttempted = false;
+
+  /** Resolver for an in-flight requestSheetsAccess() call, if any. */
+  private pendingSheetsRequest: ((granted: boolean) => void) | null = null;
 
   isAuthenticated = this.isAuthenticated$.asObservable();
   isInitialized = this.isInitialized$.asObservable();
   userName = this.userName$.asObservable();
   userPicture = this.userPicture$.asObservable();
   userEmail = this.userEmail$.asObservable();
+
+  /** True once the Sheets/Drive scopes (not just basic login) have been granted. */
+  hasSheetsAccess = this.hasSheetsAccess$.asObservable();
 
   /**
    * Role lookups are driven by the live Firestore-backed allowlist
@@ -71,6 +79,10 @@ export class GoogleAuthService {
 
   isCurrentlyOwner(): boolean {
     return this.allowedUsers.getRole(this.userEmail$.value) === 'owner';
+  }
+
+  isCurrentlySheetsAccessGranted(): boolean {
+    return this.hasSheetsAccess$.value;
   }
 
   private initWhenReady(): void {
@@ -129,7 +141,7 @@ export class GoogleAuthService {
     try {
       this.tokenClient = window.google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CONFIG.CLIENT_ID,
-        scope: GOOGLE_CONFIG.SCOPES.join(' '),
+        scope: GOOGLE_CONFIG.BASIC_SCOPES.join(' '),
         callback: (response: any) => this.handleTokenResponse(response),
       });
 
@@ -152,6 +164,28 @@ export class GoogleAuthService {
     this.tokenClient.requestAccessToken({ prompt: 'consent' });
   }
 
+  /**
+   * Second, separate consent step (Google's "incremental authorization"
+   * pattern) — requests the Sheets/Drive scopes on top of whatever's
+   * already granted. Only called from a user gesture inside the
+   * E-conomic feature, since browsers block OAuth popups that aren't
+   * triggered directly by a click.
+   */
+  requestSheetsAccess(): Promise<boolean> {
+    if (!this.tokenClient) {
+      console.error('[GoogleAuth] Token client not initialized');
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      this.pendingSheetsRequest = resolve;
+      this.tokenClient.requestAccessToken({
+        prompt: this.hasSheetsAccess$.value ? '' : 'consent',
+        scope: [...GOOGLE_CONFIG.BASIC_SCOPES, ...GOOGLE_CONFIG.SHEETS_SCOPES].join(' '),
+      });
+    });
+  }
+
   logout(): void {
     const token = localStorage.getItem(STORAGE_KEYS.accessToken);
     if (token && window.google?.accounts?.oauth2) {
@@ -169,10 +203,12 @@ export class GoogleAuthService {
     localStorage.removeItem(STORAGE_KEYS.userName);
     localStorage.removeItem(STORAGE_KEYS.userPicture);
     localStorage.removeItem(STORAGE_KEYS.userEmail);
+    localStorage.removeItem(STORAGE_KEYS.grantedScopes);
     this.isAuthenticated$.next(false);
     this.userName$.next(null);
     this.userPicture$.next(null);
     this.userEmail$.next(null);
+    this.hasSheetsAccess$.next(false);
   }
 
   getAccessToken(): string | null {
@@ -188,29 +224,56 @@ export class GoogleAuthService {
       this.userName$.next(localStorage.getItem(STORAGE_KEYS.userName));
       this.userPicture$.next(localStorage.getItem(STORAGE_KEYS.userPicture));
       this.userEmail$.next(localStorage.getItem(STORAGE_KEYS.userEmail));
+      this.hasSheetsAccess$.next(this.grantedScopesInclude(GOOGLE_CONFIG.SHEETS_SCOPES));
     }
+  }
+
+  private grantedScopesInclude(scopes: string[]): boolean {
+    const granted = localStorage.getItem(STORAGE_KEYS.grantedScopes) || '';
+    return scopes.every((scope) => granted.includes(scope));
   }
 
   private handleTokenResponse(response: any): void {
     if (response.error !== undefined) {
       console.error('[GoogleAuth] OAuth error:', response.error);
+      this.resolvePendingSheetsRequest(false);
       return;
     }
 
     const accessToken = response.access_token;
     const expiresIn = response.expires_in || 3600;
     const expiresAt = new Date().getTime() + expiresIn * 1000;
+    // response.scope reflects everything currently granted (Google folds
+    // in prior grants automatically), so this always reflects the true
+    // cumulative set rather than just what this one call asked for.
+    const grantedScopes = response.scope || '';
 
     localStorage.setItem(STORAGE_KEYS.accessToken, accessToken);
     localStorage.setItem(STORAGE_KEYS.expiresAt, expiresAt.toString());
+    localStorage.setItem(STORAGE_KEYS.grantedScopes, grantedScopes);
+
+    const sheetsAccessGranted = GOOGLE_CONFIG.SHEETS_SCOPES.every((scope) =>
+      grantedScopes.includes(scope)
+    );
 
     // Google's SDK invokes this callback outside Angular's zone (it's
     // triggered by the popup window, not a zone-patched browser API), so
     // BehaviorSubject updates here wouldn't trigger change detection —
     // the view would only catch up on the next unrelated render (e.g. a
     // manual refresh) without this.
-    this.ngZone.run(() => this.isAuthenticated$.next(true));
+    this.ngZone.run(() => {
+      this.isAuthenticated$.next(true);
+      this.hasSheetsAccess$.next(sheetsAccessGranted);
+    });
+    this.resolvePendingSheetsRequest(sheetsAccessGranted);
     this.fetchUserInfo(accessToken);
+  }
+
+  private resolvePendingSheetsRequest(granted: boolean): void {
+    if (this.pendingSheetsRequest) {
+      this.pendingSheetsRequest(granted);
+      this.pendingSheetsRequest = null;
+    }
   }
 
   private fetchUserInfo(accessToken: string): void {
