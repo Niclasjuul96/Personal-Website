@@ -18,8 +18,18 @@
   </section>
 
   <section class="projects-grid">
-    <div class="project-box" *ngFor="let project of projects" (click)="openModal(project)">
-      <img [src]="project.imgURL" [alt]="project.title" class="project-image" />
+    <div
+      class="project-box"
+      *ngFor="let entry of displayProjects"
+      [class.is-teaser]="entry.isTeaser"
+      (click)="openModal(entry)"
+    >
+      <img [src]="entry.project.imgURL" [alt]="entry.project.title" class="project-image" />
+
+      <span class="badge coming-soon" *ngIf="entry.badge === 'coming-soon'">Coming soon</span>
+      <span class="badge hidden-owner-only" *ngIf="entry.badge === 'hidden-owner-only'" title="Hidden from other visitors — you can only see this because you're the owner">
+        Hidden
+      </span>
     </div>
   </section>
 

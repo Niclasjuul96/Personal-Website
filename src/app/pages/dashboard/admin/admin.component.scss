@@ -164,3 +164,132 @@
   text-align: center;
   border: 1px dashed rgba($neon-cyan, 0.2);
 }
+
+.visibility-toggle {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  color: $text-secondary;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+
+  input {
+    accent-color: $neon-lime;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  &.disabled {
+    opacity: 0.45;
+
+    input {
+      cursor: not-allowed;
+    }
+  }
+}
+
+.user-row {
+  transition: border-color $transition-base, box-shadow $transition-base, transform 180ms ease;
+
+  &.dragging {
+    border-color: $neon-magenta !important;
+    box-shadow: 0 0 14px rgba($neon-magenta, 0.35);
+  }
+}
+
+.drag-handle {
+  cursor: grab;
+  color: $text-muted;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: $space-xs;
+  user-select: none;
+
+  &:hover {
+    color: $neon-cyan;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.visibility-state {
+  min-width: 90px;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: $neon-lime;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-lg;
+  @include glass-morphism;
+}
+
+.project-textarea {
+  padding: $space-md;
+  border: 1px solid rgba($neon-cyan, 0.3);
+  background: $dark-bg-secondary;
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: 0.95rem;
+  resize: vertical;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $neon-cyan;
+    box-shadow: 0 0 0 3px rgba($neon-cyan, 0.18);
+  }
+}
+
+.image-upload-row {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  flex-wrap: wrap;
+
+  input[type='file'] {
+    color: $text-secondary;
+    font-size: 0.85rem;
+  }
+}
+
+.upload-status {
+  color: $neon-lime;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.image-preview {
+  height: 48px;
+  width: 48px;
+  object-fit: cover;
+  border: 1px solid rgba($neon-cyan, 0.3);
+}
+
+.edit-btn {
+  @include neon-border($neon-cyan);
+  color: $neon-cyan;
+  padding: $space-sm $space-md;
+  font-size: 0.75rem;
+
+  &::before {
+    background: rgba($neon-cyan, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    @include no-jump-hover($neon-cyan, 0.12);
+  }
+}

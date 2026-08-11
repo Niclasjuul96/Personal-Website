@@ -57,4 +57,156 @@
       <p class="empty-state">No one's been added yet.</p>
     }
   </section>
+
+  <div class="heading">
+    <h4>Projects</h4>
+    <div class="underline"></div>
+    <p class="intro">
+      Add, edit, or remove Portfolio projects. Images are uploaded to Firebase Storage and stored
+      as a plain URL — the project's actual code/build still gets deployed to Hostinger the same
+      way as always, this only manages the card that shows up on the Portfolio page.
+    </p>
+  </div>
+
+  <section class="project-form">
+    <input type="text" placeholder="Project title" [(ngModel)]="projectForm.title" class="email-input" />
+
+    <textarea
+      placeholder="Description"
+      [(ngModel)]="projectForm.detail"
+      class="project-textarea"
+      rows="3"
+    ></textarea>
+
+    <input
+      type="text"
+      placeholder="Tech stack, comma-separated (e.g. react, javascript, firebase)"
+      [(ngModel)]="projectTechInput"
+      class="email-input"
+    />
+
+    <input type="url" placeholder="GitHub URL" [(ngModel)]="projectForm.githuburl" class="email-input" />
+
+    <input
+      type="url"
+      placeholder="Live preview URL (optional)"
+      [(ngModel)]="projectForm.livepreviewurl"
+      class="email-input"
+    />
+
+    <div class="image-upload-row">
+      <input type="file" accept="image/*" (change)="onProjectImageSelected($event)" [disabled]="uploadingImage" />
+      @if (uploadingImage) {
+        <span class="upload-status">Uploading...</span>
+      } @else if (projectForm.imgURL) {
+        <img [src]="projectForm.imgURL" alt="" class="image-preview" />
+      }
+    </div>
+
+    <div class="export-actions">
+      <button
+        type="button"
+        class="btn add-btn"
+        (click)="saveProject()"
+        [disabled]="isSubmittingProject || uploadingImage"
+      >
+        {{ isSubmittingProject ? 'Saving...' : (editingProjectId ? 'Save Changes' : 'Add Project') }}
+      </button>
+
+      @if (editingProjectId) {
+        <button type="button" class="btn remove-btn" (click)="cancelEditProject()">Cancel Edit</button>
+      }
+    </div>
+  </section>
+
+  <div class="heading">
+    <h4>Project Visibility &amp; Order</h4>
+    <div class="underline"></div>
+    <p class="intro">
+      Controls what visitors see on the Portfolio page. <strong>Live</strong> shows the project
+      normally. Turning a project off reveals a <strong>Coming soon</strong> option — checked
+      shows a teaser badge, unchecked hides the project entirely. You always see every project
+      yourself, regardless of these settings. Drag by the handle to reorder — this is also the
+      order visitors see on the Portfolio page.
+    </p>
+  </div>
+
+  <section class="user-list">
+    @if (visibilityStates | async; as _1) {
+      @if (projectOrder | async; as _2) {
+        @for (project of orderedProjects(); track project.id) {
+          <div
+            class="user-row"
+            [class.dragging]="draggedProjectId === project.id"
+            (dragenter)="onDragOver(project.id, $event)"
+            (dragover)="onDragOver(project.id, $event)"
+            (drop)="onDrop($event)"
+          >
+            <span
+              class="drag-handle"
+              draggable="true"
+              (dragstart)="onDragStart(project.id, $event)"
+              (dragend)="onDragEnd()"
+              title="Drag to reorder"
+            >
+              &#9776;
+            </span>
+
+            <span class="user-email">{{ project.title }}</span>
+
+            <label class="visibility-toggle">
+              <input
+                type="checkbox"
+                [checked]="getProjectState(project.id).live"
+                (change)="setLive(project.id, project.title, $any($event.target).checked)"
+                [disabled]="savingProjectId === project.id"
+              />
+              Live
+            </label>
+
+            <label
+              class="visibility-toggle"
+              [class.disabled]="getProjectState(project.id).live"
+              [title]="getProjectState(project.id).live ? 'Only applies while the project is off' : ''"
+            >
+              <input
+                type="checkbox"
+                [checked]="getProjectState(project.id).comingSoon"
+                (change)="setComingSoon(project.id, project.title, $any($event.target).checked)"
+                [disabled]="getProjectState(project.id).live || savingProjectId === project.id"
+              />
+              Coming soon
+            </label>
+
+            <span class="visibility-state">
+              {{ getProjectState(project.id).live ? 'Live' : (getProjectState(project.id).comingSoon ? 'Coming soon' : 'Hidden') }}
+            </span>
+
+            @if (!isImageInStorage(project.imgURL)) {
+              <button
+                type="button"
+                class="btn edit-btn"
+                (click)="migrateImageToStorage(project)"
+                [disabled]="migratingImageProjectId === project.id"
+                title="Fetches the current image and re-uploads it to Firebase Storage, so every project's image lives in the same place"
+              >
+                {{ migratingImageProjectId === project.id ? 'Moving...' : 'Move image to Storage' }}
+              </button>
+            }
+
+            <button type="button" class="btn edit-btn" (click)="startEditProject(project)">Edit</button>
+
+            <button
+              type="button"
+              class="btn remove-btn"
+              (click)="deleteProject(project.id)"
+              [disabled]="deletingProjectId === project.id"
+            >
+              {{ deletingProjectId === project.id ? 'Removing...' : 'Delete' }}
+            </button>
+          </div>
+        }
+      }
+    }
+  </section>
 </div>
