@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Portfolio project images, uploaded from the admin UI's project
+    // form. Same public-read, owner-only-write shape as the Firestore
+    // rules (firestore.rules) — reads are public since these images are
+    // already served publicly on the Portfolio page either way.
+    match /project-images/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
+    }
+
+    // Everything else stays denied by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

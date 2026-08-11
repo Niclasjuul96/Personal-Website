@@ -1,40 +1,17 @@
 @use './styles/cyberpunk-design' as *;
 
-.reveal-on-scroll {
-	opacity: 0;
-	transform: translateY(18px);
-	filter: blur(1.5px);
-	transition: opacity 560ms ease, transform 560ms ease, filter 560ms ease;
-	transition-delay: var(--reveal-delay, 0ms);
-	will-change: opacity, transform, filter;
-}
-
-.reveal-on-scroll.is-visible {
-	opacity: 1;
-	transform: translateY(0);
-	filter: blur(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.reveal-on-scroll,
-	.reveal-on-scroll.is-visible {
-		opacity: 1;
-		transform: none;
-		filter: none;
-		transition: none;
-	}
+// `.body` (main content) has its own stacking context (position: relative;
+// z-index: 1; in cyberpunk-design.scss) so any fixed-position overlay
+// rendered inside it — like the Portfolio project modal — is capped below
+// the header's z-index: 10 no matter its own z-index. Any component that
+// opens a full-page modal should toggle this class (see
+// PortfolioComponent.openModal/closeModal) to lift `.body` above the
+// header just while the modal is open.
+body.modal-open .body {
+	z-index: 1001;
 }
 
 @media print {
-	.reveal-on-scroll,
-	.reveal-on-scroll.is-visible {
-		opacity: 1 !important;
-		transform: none !important;
-		filter: none !important;
-		transition: none !important;
-		animation: none !important;
-	}
-
 	body.cv-print-mode,
 	html.cv-print-mode {
 		background: #fff !important;
