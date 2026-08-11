@@ -459,8 +459,6 @@ h2 {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     color: #1a1a2e;
-    break-inside: avoid;
-    page-break-inside: avoid;
     margin-bottom: 5mm;
   }
 
@@ -626,8 +624,7 @@ h2 {
   }
 
   .meta-row,
-  .identity,
-  .footer-info {
+  .identity {
     break-inside: avoid;
     page-break-inside: avoid;
   }

@@ -182,10 +182,12 @@ export const cvProfile: CvProfile = {
         en:
           'Delivered comprehensive 1st and 2nd level IT support for students, teachers, and administrative staff. ' +
           'Diagnosed and resolved hardware, software, and network issues, configured and deployed workstations, and managed users in Active Directory and Entra ID. ' +
+          'Set up and maintained AV equipment in classrooms and meeting rooms, including projectors, screens, and cabling. ' +
           'Worked structured with ITIL-based IT Service Management for incident handling, asset management, and documentation, ensuring stable and reliable operations.',
         da:
           'Leverede bred 1st og 2nd level IT-support til både elever, undervisere og administrative medarbejdere. ' +
           'Diagnosticerede og løste hardware-, software- og netværksfejl, klargjorde arbejdsstationer samt administrerede brugere og rettigheder i Active Directory og Entra ID. ' +
+          'Opsatte og vedligeholdt AV-udstyr i klasse- og mødelokaler, herunder projektorer, skærme og kabling. ' +
           'Arbejdede struktureret med ITIL-baseret IT Service Management til incidenthåndtering, asset management og fejlsøgning, hvilket sikrede stabil og effektiv supportdrift.'
       }
     }
@@ -216,11 +218,11 @@ export const cvProfile: CvProfile = {
       },
       description: {
         en:
-          'Completed a comprehensive IT education combining software development with enterprise operations. ' +
+          'Completed a comprehensive IT education combining software development with enterprise operations, built directly on top of an initial support/infrastructure specialization. ' +
           'Acquired robust skills within Windows/Linux server technologies, virtualization, and networking. ' +
           'The program had a strong emphasis on IT Service Management (ITIL), bridges the gap between technical operations and structured end-user support.',
         da:
-          'Uddannet datatekniker med kombination af softwareudvikling, netværk og it-drift. ' +
+          'Uddannet datatekniker med kombination af softwareudvikling, netværk og it-drift, som bygger direkte videre på en indledende specialisering inden for support/infrastruktur. ' +
           'Opnåede bred teknisk indsigt i Windows/Linux serverteknologier, netværk og virtualisering. ' +
           'Uddannelsen indeholdt stort fokus på IT Service Management (ITIL), hvilket sikrer en struktureret og procesorienteret tilgang til support og fejlsøgning.'
       },
@@ -256,10 +258,11 @@ export const cvProfile: CvProfile = {
       name: 'Beredskabets venner',
       description: {
         en:
-          'Tasks related to customer service, communications, and situation handling were supported, fostering a ' +
-          'calm and solution-oriented approach to unexpected challenges.',
+          'Supported tasks related to customer service, communications, and situation handling in time-critical settings. ' +
+          'This experience sharpened my ability to stay calm, coordinate effectively, and act decisively when operations are critical and unexpected situations demand a fast, level-headed response.',
         da:
-          'Deltog i frivilligt arbejde med fokus på kommunikation, koordinering og håndtering af uforudsete situationer. Erfaringen styrkede min evne til at bevare overblikket, samarbejde effektivt og handle roligt under pres.'
+          'Deltog i frivilligt arbejde med fokus på kommunikation, koordinering og håndtering af uforudsete situationer under tidspres. ' +
+          'Erfaringen har skærpet min evne til at bevare overblikket, samarbejde effektivt og handle roligt, når driften er kritisk, og situationen kræver hurtig og korrekt handling.'
       }
     }
   ],
@@ -312,17 +315,17 @@ export const roleContentByRole: Record<CvRole, CvRoleContent> = {
   'it-support': {
     title: 'IT Support Specialist | Service Desk | 1st & 2nd Line',
     quote: {
-      en: 'Service-minded IT supporter motivated by contributing to DSB\'s 24/7 ServiceDesk with structured incident handling and a calm approach under pressure.',
-      da: 'Serviceminded IT-supporter, der motiveres af at bidrage til DSB\'s døgnbemandede ServiceDesk med struktureret incidenthåndtering og ro under pres.'
+      en: 'Service-minded IT supporter motivated by contributing to a busy ServiceDesk with structured incident handling and a calm approach under pressure.',
+      da: 'Serviceminded IT-supporter, der motiveres af at bidrage til en travl ServiceDesk med struktureret incidenthåndtering og ro under pres.'
     },
     info: {
       en:
-        'IT supporter highly motivated by delivering reliable support for DSB\'s ServiceDesk to keep internal users running 24/7. ' +
+        'IT supporter highly motivated by delivering reliable support for a ServiceDesk to keep internal users running smoothly. ' +
         'I have strong hands-on experience with 1st and 2nd line phone support, structured incident handling, and clear communication under pressure. ' +
         'I take pride in ownership of tickets from first contact to final resolution, ensuring expectations are aligned. ' +
         'My logical and development background allows me to analyze complex technical errors quickly, while always maintaining a calm, empathetic, and service-minded approach.',
       da:
-        'IT-supporter med stor motivation for at levere stabil support i DSB\'s ServiceDesk, der sikrer, at kollegerne hjælpes godt videre døgnet rundt. ' +
+        'IT-supporter med stor motivation for at levere stabil support i en ServiceDesk, der sikrer, at kollegerne hjælpes godt videre. ' +
         'Jeg har solid praktisk erfaring med både 1st og 2nd line support, telefonisk fejlfinding og struktureret sagsbehandling i travle driftsmiljøer. ' +
         'Jeg tager fuldt ejerskab over incidents fra første opkald til endelig løsning og sikrer en tæt, tryg forventningsafstemning med brugeren. ' +
         'Min tekniske baggrund gør mig i stand til hurtigt at analysere komplekse problemer og eskalere korrekt, uden at miste det servicemindede fokus.'
@@ -394,17 +397,6 @@ export interface SiteService {
   link: string;
 }
 
-export interface SiteProject {
-  id: number;
-  title: string;
-  imgURL: string;
-  detail: string;
-  githuburl: string;
-  livepreviewurl?: string;
-  tech: string[];
-  accounts?: string[];
-}
-
 export interface SiteTechnology {
   name: string;
   icon: string;
@@ -431,60 +423,6 @@ export const siteServices: SiteService[] = [
     img: 'assets/Freelancing.jpg',
     description: 'I want to set my self free and work on multiple projects and bringing my ideas to life.',
     link: '/about'
-  }
-];
-
-export const siteProjects: SiteProject[] = [
-  {
-    id: 1,
-    title: 'Chat-App',
-    imgURL: 'assets/project-images/Chat-App.png',
-    detail: 'This chat application is based on react and using firebase as the backend to track messages back and forth between users. It is available to use the existing accounts or creating a new account. It will be possible to find the users by thier firstName, upper and lowercase dosn\'t matter. for the real experience i would recommend to create an account and searching for users. cause many of the test users already have conversations between them.',
-    githuburl: 'https://github.com/Niclasjuul96/Chat-App',
-    livepreviewurl: 'http://chatapp.niclasjuul.dk/',
-    tech: ['react', 'javascript', 'node.js', 'json', 'firebase'],
-    accounts: [
-      'Account 1: jimmy@gmail.com, pass: password',
-      'Account 2: jenna@gmail.com, pass: password',
-      'Account 3: jennifer@gmail.com, pass: password',
-      'Account 4: peter@gmail.com pass: password'
-    ]
-  },
-  {
-    id: 2,
-    title: 'NoteEase',
-    imgURL: 'assets/project-images/NoteEase.png',
-    detail: 'NoteEase was one of my first projects, that i was doing while learning react. a simple note taking app that is saving your notes to remember for another time, i am using json and local storage to retrieve and save notes and able to delete aswell',
-    githuburl: 'https://github.com/Niclasjuul96/NoteEase',
-    livepreviewurl: 'http://noteease.niclasjuul.dk/',
-    tech: ['react', 'javascript', 'node.js', 'json']
-  },
-  {
-    id: 3,
-    title: 'Simon Says Game',
-    imgURL: 'assets/project-images/SimonGame.png',
-    detail: 'Simon game was a little funny project that i was testing if i would be able to do. it\'s just envolving the basic html, css and javascript.',
-    githuburl: 'https://github.com/Niclasjuul96/SimonGame',
-    livepreviewurl: 'http://simongame.niclasjuul.dk/',
-    tech: ['Html', 'CSS', 'JavaScript']
-  },
-  {
-    id: 4,
-    title: 'Password Generator',
-    imgURL: 'assets/project-images/password.png',
-    detail: 'Password generator is a small and simple tool to generate password that includes what ever you like. to solve solve one of the hardest stuff in life, finding a password to use. and ofc the copy to clipboard doesn\'t work on the website cause it\'s not possible. but iif you download the project from github, you will be able to use that feature aswell.',
-    githuburl: 'https://github.com/Niclasjuul96/PasswordGenerator/',
-    livepreviewurl: 'http://passwordgenerator.niclasjuul.dk/',
-    tech: ['html', 'CSS', 'JavaScript']
-  },
-  {
-    id: 5,
-    title: 'KanBan Board',
-    imgURL: 'assets/project-images/KanBan.png',
-    detail: 'This small kanban board project is based on console application, and coordination through tublespaces. Able to work around with the application at the same time without interfering with others. The live-preview will not work, so if you wanna look how it works, you will need to go to github and clone it.',
-    githuburl: 'https://github.com/Niclasjuul96/KanBan',
-    livepreviewurl: '',
-    tech: ['Java', 'Tublespaces']
   }
 ];
 
