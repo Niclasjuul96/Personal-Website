@@ -142,6 +142,53 @@
     filter: brightness(0.8) contrast(1.1) saturate(0.8);
   }
 
+  &.is-teaser {
+    cursor: default;
+
+    &:hover {
+      border-color: $neon-cyan;
+
+      .project-image {
+        filter: brightness(0.8) contrast(1.1) saturate(0.8);
+      }
+
+      &::after {
+        opacity: 0;
+      }
+    }
+
+    .project-image {
+      filter: brightness(0.5) contrast(1.1) saturate(0.6);
+    }
+  }
+
+  .badge {
+    position: absolute;
+    top: $space-md;
+    right: $space-md;
+    z-index: 4;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid;
+
+    &.coming-soon {
+      color: $neon-yellow;
+      border-color: rgba($neon-yellow, 0.6);
+      background: rgba($neon-yellow, 0.12);
+      box-shadow: 0 0 10px rgba($neon-yellow, 0.3);
+    }
+
+    &.hidden-owner-only {
+      color: $neon-magenta;
+      border-color: rgba($neon-magenta, 0.6);
+      background: rgba($neon-magenta, 0.12);
+      box-shadow: 0 0 10px rgba($neon-magenta, 0.3);
+    }
+  }
+
   @media (max-width: $breakpoint-md) {
     min-height: 250px;
   }

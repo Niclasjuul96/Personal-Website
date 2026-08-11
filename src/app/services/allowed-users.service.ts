@@ -9,8 +9,8 @@ import {
   onSnapshot,
   setDoc,
 } from 'firebase/firestore';
-import { Auth, GoogleAuthProvider, getAuth, signInWithCredential } from 'firebase/auth';
 import { getFirebaseApp } from './firebase-app';
+import { ensureFirebaseAuth } from './firebase-auth-bridge';
 
 /**
  * Roles are a plain string union on purpose — adding a new role later
@@ -49,7 +49,6 @@ const COLLECTION_NAME = 'allowedUsers';
 })
 export class AllowedUsersService {
   private db: Firestore = getFirestore(getFirebaseApp());
-  private auth: Auth = getAuth(getFirebaseApp());
 
   private users$ = new BehaviorSubject<AllowedUserRecord[]>([]);
   private loaded$ = new BehaviorSubject<boolean>(false);
@@ -124,30 +123,14 @@ export class AllowedUsersService {
    * will get a permission-denied error from Firestore itself.
    */
   async addOrUpdateUser(email: string, role: Role, accessToken: string): Promise<void> {
-    await this.ensureFirebaseAuth(accessToken);
+    await ensureFirebaseAuth(accessToken);
     const id = email.toLowerCase();
     await setDoc(doc(this.db, COLLECTION_NAME, id), { email, role });
   }
 
   async removeUser(email: string, accessToken: string): Promise<void> {
-    await this.ensureFirebaseAuth(accessToken);
+    await ensureFirebaseAuth(accessToken);
     const id = email.toLowerCase();
     await deleteDoc(doc(this.db, COLLECTION_NAME, id));
-  }
-
-  /**
-   * Firestore's security rules check the *Firebase Auth* session's email,
-   * not this site's own Google login state directly — so writes need a
-   * Firebase Auth session established first. Reuses the site's existing
-   * Google access token (via the whitelisted external client ID in
-   * Firebase Auth's Google provider settings) instead of a second,
-   * separate login popup.
-   */
-  private async ensureFirebaseAuth(accessToken: string): Promise<void> {
-    if (this.auth.currentUser) {
-      return;
-    }
-    const credential = GoogleAuthProvider.credential(null, accessToken);
-    await signInWithCredential(this.auth, credential);
   }
 }

@@ -17,6 +17,35 @@ service cloud.firestore {
                    && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
     }
 
+    // Per-project visibility state (live / coming-soon / hidden) for the
+    // Portfolio page, editable from the admin UI. Same public-read,
+    // owner-only-write shape as allowedUsers above, and the same reasoning:
+    // this data was already effectively public (which projects exist is
+    // visible in the compiled bundle either way).
+    match /projectVisibility/{projectId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
+    }
+
+    // Explicit Portfolio project ordering (a single doc holding an ordered
+    // list of project ids), editable from the admin UI. Same shape as
+    // above — public read, owner-only write.
+    match /projectOrder/{orderId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
+    }
+
+    // The actual Portfolio project content (title, description, tech
+    // stack, links, image URL) — replaces what used to be hardcoded in
+    // cv-profile.ts. Same public-read, owner-only-write shape as above.
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.email.lower() == 'niclasschaeffer96@gmail.com';
+    }
+
     // Everything else stays denied by default (production mode).
   }
 }
