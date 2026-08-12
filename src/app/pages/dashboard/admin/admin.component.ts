@@ -176,7 +176,8 @@ export class AdminComponent implements OnInit, OnDestroy {
       githuburl: project.githuburl,
       livepreviewurl: project.livepreviewurl ?? '',
       tech: [...project.tech],
-      accounts: project.accounts ? [...project.accounts] : undefined
+      accounts: project.accounts ? [...project.accounts] : undefined,
+      embeddable: project.embeddable ?? false
     };
     this.projectTechInput = project.tech.join(', ');
     this.errorMessage = null;
@@ -306,7 +307,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   private emptyProjectForm(): ProjectInput {
-    return { title: '', imgURL: '', detail: '', githuburl: '', livepreviewurl: '', tech: [] };
+    return { title: '', imgURL: '', detail: '', githuburl: '', livepreviewurl: '', tech: [], embeddable: false };
   }
 
   // ---- Project visibility (Live / Coming soon / Hidden) ----

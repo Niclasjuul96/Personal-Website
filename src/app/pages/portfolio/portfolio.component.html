@@ -34,12 +34,19 @@
   </section>
 
   <div class="modal-wrapper" *ngIf="isModalOpen && selectedProject" (click)="closeModal()" role="dialog" aria-modal="true">
-    <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal" [class.has-embed]="!!embedUrl" (click)="$event.stopPropagation()">
       <div class="content">
         <span class="close" (click)="closeModal()" role="button" tabindex="0" aria-label="Close modal">
           &times;
         </span>
-        <img class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
+        <iframe
+          *ngIf="embedUrl"
+          class="embed"
+          [src]="embedUrl"
+          [title]="selectedProject.title + ' live preview'"
+          loading="lazy"
+        ></iframe>
+        <img *ngIf="!embedUrl" class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
         <h2 class="title">{{ selectedProject.title }}</h2>
         <p class="detail">{{ selectedProject.detail }}</p>
         

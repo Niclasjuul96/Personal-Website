@@ -23,6 +23,8 @@ export interface ProjectRecord {
   livepreviewurl?: string;
   tech: string[];
   accounts?: string[];
+  /** Show livepreviewurl inline via an iframe in the Portfolio modal, instead of only linking out. Requires the target host to allow framing (no X-Frame-Options/frame-ancestors block). */
+  embeddable?: boolean;
 }
 
 export type ProjectInput = Omit<ProjectRecord, 'id'>;

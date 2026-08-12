@@ -254,6 +254,21 @@
   }
 }
 
+.embed-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-sm;
+  font-size: 0.85rem;
+  color: $text-secondary;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    margin-top: 3px;
+    accent-color: $neon-cyan;
+    cursor: pointer;
+  }
+}
+
 .image-upload-row {
   display: flex;
   align-items: center;

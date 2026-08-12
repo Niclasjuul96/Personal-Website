@@ -224,9 +224,15 @@
     transition: all $transition-base;
     @include shared-glass-box(rgba($neon-cyan, 0.55), $neon-cyan, 0.66);
     box-shadow: 0 0 30px rgba($neon-cyan, 0.45), inset 0 0 20px rgba($neon-cyan, 0.12) !important;
-    
+
     // Force text color
     color: $text-secondary !important;
+
+    // The embedded demo apps need real screen space to be usable, not just
+    // previewable — much wider/taller than the plain description modal.
+    &.has-embed {
+      max-width: min(1600px, 96vw);
+    }
 
     .content {
       padding: $space-2xl;
@@ -270,6 +276,21 @@
         border: 1px solid $neon-magenta;
         box-shadow: 0 0 15px rgba($neon-magenta, 0.4);
         margin-top: $space-lg;
+      }
+
+      .embed {
+        width: 100%;
+        height: 80vh;
+        min-height: 600px;
+        border: 1px solid $neon-magenta;
+        box-shadow: 0 0 15px rgba($neon-magenta, 0.4);
+        margin-top: $space-lg;
+        background: $dark-bg;
+
+        @media (max-width: $breakpoint-md) {
+          height: 60vh;
+          min-height: 400px;
+        }
       }
 
       .title {

@@ -59,23 +59,27 @@ session against the hardcoded owner email — not from the app's UI.
 Revisit this if a future feature needs data that isn't already protected
 one of these two ways.
 
-## Planned: embed minor showcase projects via iframe — idea captured 2026-08-06, not built yet
+## Done: embed minor showcase projects via iframe — built 2026-08-12
 
-Small side/demo projects (Chat-App, NoteEase, SimonGame, PasswordGenerator
-— not KanBan, see below) already run on their own subdomains
-(`chatapp.niclasjuul.dk` etc., confirmed live in Hostinger's File
-Manager). Idea: embed them via `<iframe>` in their Portfolio card instead
-of just linking out, so browsing stays on the main site. Native merge
-(like E-conomic) doesn't make sense here — no shared login needed.
+Chat-App, NoteEase, SimonGame, and PasswordGenerator can now be embedded
+inline in their Portfolio modal instead of only linking out, via a new
+`embeddable?: boolean` field on `ProjectRecord`
+(`src/app/services/projects.service.ts`), toggled per-project from
+`/dashboard/admin`. When set, the modal shows a sanitized `<iframe>` of
+`livepreviewurl` (`src/app/pages/portfolio/portfolio.component.ts/.html`)
+in place of the static image; the pre-existing "Live Preview" button is
+unchanged and still opens the subdomain directly in a new tab as a
+fullscreen fallback.
 
-**Real risk to check per project before committing:** an iframe only
-works if the subdomain's host doesn't send `X-Frame-Options`/CSP
-`frame-ancestors` headers blocking it — that's controlled by the framed
-project's own server response, not fixable from the parent site.
+Confirmed none of the 4 subdomains send `X-Frame-Options`/CSP
+`frame-ancestors` — framing isn't blocked. The modal grows to `96vw`
+(max 1600px) / `80vh` for embedded content (`.modal.has-embed`, `.embed`
+in `portfolio.component.scss`) so the demos have real room to work in,
+after the default 900px/60vh size proved too cramped in testing.
 
 **KanBan** isn't a web app (JavaFX desktop app, DTU coursework) — already
 handled correctly as a GitHub-link-only Portfolio entry with no live
-preview, not part of the iframe plan.
+preview, not part of the iframe feature.
 
 ## Open questions to revisit later
 

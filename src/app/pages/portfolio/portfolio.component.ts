@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { ProjectsService, ProjectRecord } from '../../services/projects.service';
 import { ProjectVisibilityService } from '../../services/project-visibility.service';
@@ -23,11 +24,14 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   private projectsService = inject(ProjectsService);
   private projectVisibility = inject(ProjectVisibilityService);
   private googleAuth = inject(GoogleAuthService);
+  private sanitizer = inject(DomSanitizer);
 
   private allProjects: ProjectRecord[] = [];
   displayProjects: DisplayProject[] = [];
   selectedProject: ProjectRecord | null = null;
   isModalOpen = false;
+  /** Trusted only because livepreviewurl is admin-entered (owner-only Firestore write), never visitor-supplied. */
+  embedUrl: SafeResourceUrl | null = null;
 
   private subscription?: Subscription;
 
@@ -60,6 +64,10 @@ export class PortfolioComponent implements OnInit, OnDestroy {
       return;
     }
     this.selectedProject = entry.project;
+    this.embedUrl =
+      entry.project.embeddable && entry.project.livepreviewurl
+        ? this.sanitizer.bypassSecurityTrustResourceUrl(entry.project.livepreviewurl)
+        : null;
     this.isModalOpen = true;
     // `.body`'s own stacking context (see cyberpunk-design.scss) otherwise
     // traps this fixed-position modal below the header, no matter how high
@@ -71,6 +79,7 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedProject = null;
+    this.embedUrl = null;
     document.body.classList.remove('modal-open');
   }
 

@@ -94,6 +94,12 @@
       class="email-input"
     />
 
+    <label class="embed-checkbox">
+      <input type="checkbox" [(ngModel)]="projectForm.embeddable" />
+      Embed live preview inline (iframe) on the Portfolio card, instead of only opening in a new tab
+      — only works if the target site allows framing.
+    </label>
+
     <div class="image-upload-row">
       <input type="file" accept="image/*" (change)="onProjectImageSelected($event)" [disabled]="uploadingImage" />
       @if (uploadingImage) {
