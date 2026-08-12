@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
@@ -18,6 +18,7 @@ interface DisplayProject {
   selector: 'app-portfolio',
   imports: [],
   templateUrl: './portfolio.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './portfolio.component.scss'
 })
 export class PortfolioComponent implements OnInit, OnDestroy {

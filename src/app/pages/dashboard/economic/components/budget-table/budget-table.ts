@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { BudgetRow } from '../../models/types';
 import { MONTH_COLUMNS } from '../../constants/months';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './budget-table.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./budget-table.scss']
 })
 export class BudgetTable {

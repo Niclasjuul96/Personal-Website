@@ -94,7 +94,7 @@
       {{ role === 'general' ? sectionLabels.combinedExperience[lang] : sectionLabels.workExperience[lang] }}
     </h2>
     <div class="cards">
-      @for (item of getExperienceForCurrentRole(); track item; let i = $index) {
+      @for (item of experienceForCurrentRole; track item; let i = $index) {
         <article class="card" [style.--stagger-index]="i">
           <div class="meta-row">
             <span class="badge" [class.work]="item.isWorkExperience" [class.other]="!item.isWorkExperience">
@@ -118,7 +118,7 @@
     <section class="experience">
       <h2>{{ sectionLabels.otherExperience[lang] }}</h2>
       <div class="cards">
-        @for (item of getOtherExperienceForCurrentRole(); track item; let i = $index) {
+        @for (item of otherExperienceForCurrentRole; track item; let i = $index) {
           <article class="card" [style.--stagger-index]="i">
             <div class="meta-row">
               <span class="badge other">{{ sectionLabels.otherBadge[lang] }}</span>

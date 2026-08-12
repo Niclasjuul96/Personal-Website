@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { GoogleSheetsService } from '../../services/google-sheets.service';
 import { GoogleAuthService } from '../../../../../services/google-auth.service';
 import { GOOGLE_CONFIG } from '../../../../../constants/google-config';
@@ -17,6 +17,7 @@ declare global {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './sheet-selector.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sheet-selector.scss'
 })
 export class SheetSelector implements OnInit {

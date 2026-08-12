@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import services, { Service } from '../../data/services';
 import { workExperiences, otherExperiences, education, Experience, Education } from '../../data/data';
@@ -7,6 +7,7 @@ import { workExperiences, otherExperiences, education, Experience, Education } f
   selector: 'app-home',
   imports: [],
   templateUrl: './home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {

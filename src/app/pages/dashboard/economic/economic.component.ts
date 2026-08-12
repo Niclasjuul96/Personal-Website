@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CsvUpload } from './components/csv-upload/csv-upload';
 import { BudgetTable } from './components/budget-table/budget-table';
 import { TransactionDetails } from './components/transaction-details/transaction-details';
@@ -16,6 +16,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
   standalone: true,
   imports: [CsvUpload, BudgetTable, TransactionDetails, SheetSelector, CommonModule, FormsModule],
   templateUrl: './economic.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./economic.component.scss']
 })
 export class EconomicComponent implements OnInit {

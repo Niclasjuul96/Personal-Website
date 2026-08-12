@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import techstack, { Technology } from '../../data/techstack';
 
@@ -6,6 +6,7 @@ import techstack, { Technology } from '../../data/techstack';
   selector: 'app-about',
   imports: [],
   templateUrl: './about.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './about.component.scss'
 })
 export class AboutComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { CsvParserService } from '../../services/csv-parser.service';
 import { ParsedCsvData, TransactionDetail } from '../../models/types';
 import { defaultCsvStructure, CsvStructure } from '../../constants/csv-structure';
@@ -9,6 +9,7 @@ import { defaultCsvStructure, CsvStructure } from '../../constants/csv-structure
   templateUrl: './csv-upload.html',
   styleUrls: ['./csv-upload.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: []
 })
 export class CsvUpload {

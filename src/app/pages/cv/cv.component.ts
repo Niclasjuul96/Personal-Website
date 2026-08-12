@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import {
   cvProfile,
@@ -27,6 +27,7 @@ interface ExportPreset {
   selector: 'app-cv',
   imports: [],
   templateUrl: './cv.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cv.component.scss'
 })
 export class CvComponent implements OnInit, OnDestroy {
@@ -75,11 +76,14 @@ export class CvComponent implements OnInit, OnDestroy {
   protected copied = false;
 
   protected combinedExperience: DisplayExperienceItem[] = [];
+  protected experienceForCurrentRole: DisplayExperienceItem[] = [];
+  protected otherExperienceForCurrentRole: DisplayExperienceItem[] = [];
 
   ngOnInit(): void {
     this.loadPreferences();
     this.updateDocumentTitle();
     this.combinedExperience = this.buildCombinedExperience();
+    this.refreshExperienceLists();
     window.addEventListener('afterprint', this.handleAfterPrint);
   }
 
@@ -106,6 +110,7 @@ export class CvComponent implements OnInit, OnDestroy {
     this.role = role;
     this.persistPreferences();
     this.updateDocumentTitle();
+    this.refreshExperienceLists();
   }
 
   protected applyPreset(preset: ExportPreset): void {
@@ -113,6 +118,7 @@ export class CvComponent implements OnInit, OnDestroy {
     this.role = preset.role;
     this.persistPreferences();
     this.updateDocumentTitle();
+    this.refreshExperienceLists();
   }
 
   protected togglePrintOptions(): void {
@@ -168,7 +174,19 @@ export class CvComponent implements OnInit, OnDestroy {
     return 'Pick a language/role preset, copy the filename, then use Print to save as PDF.';
   }
 
-  protected getExperienceForCurrentRole(): DisplayExperienceItem[] {
+  /**
+   * Computed once per role change (not called from the template) — these
+   * back @for loops keyed by object identity (`track item`), and a method
+   * called directly from a template re-runs on every change-detection pass,
+   * returning fresh object instances each time and tripping NG0100 on the
+   * per-item `[style.--stagger-index]` binding.
+   */
+  private refreshExperienceLists(): void {
+    this.experienceForCurrentRole = this.computeExperienceForCurrentRole();
+    this.otherExperienceForCurrentRole = this.computeOtherExperienceForCurrentRole();
+  }
+
+  private computeExperienceForCurrentRole(): DisplayExperienceItem[] {
     if (this.role === 'general') {
       return this.combinedExperience;
     }
@@ -181,7 +199,7 @@ export class CvComponent implements OnInit, OnDestroy {
     }));
   }
 
-  protected getOtherExperienceForCurrentRole(): DisplayExperienceItem[] {
+  private computeOtherExperienceForCurrentRole(): DisplayExperienceItem[] {
     if (this.role === 'general') {
       return [];
     }

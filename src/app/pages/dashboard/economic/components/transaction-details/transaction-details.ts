@@ -5,7 +5,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionDetail } from '../../models/types';
@@ -15,6 +16,7 @@ import { TransactionDetail } from '../../models/types';
   standalone: true,
   templateUrl: './transaction-details.html',
   styleUrls: ['./transaction-details.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule]
 })
 export class TransactionDetails implements OnDestroy {
