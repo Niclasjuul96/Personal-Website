@@ -1,16 +1,18 @@
 # Niclas Schæffer - Personal Portfolio Website
 
-A modern, responsive portfolio website built with **Angular 19** featuring a cyberpunk-inspired dark theme design. The site showcases work experience, projects, tech stack, and provides direct contact capabilities.
+A modern, responsive personal site built with **Angular 22** featuring a cyberpunk-inspired dark theme. Beyond a standard portfolio, it's the single entry point for Niclas's own tools: log in with Google once and it unlocks a personal dashboard — a live-editable Portfolio, and a full budget tracker (E-conomic) merged in natively.
 
 ## 🌟 Features
 
 - **Responsive Design**: Mobile-first approach with adaptive layouts across all devices
 - **Cyberpunk Aesthetic**: Dark theme with neon cyan, magenta, and lime accent colors
-- **Smooth Animations**: Polished transitions and hover effects throughout
+- **Google Sign-In**: One login unlocks the personal dashboard; a Firestore-backed allowlist and role system (`owner` / `member`) controls access, editable live from the admin UI — no code-and-redeploy needed
+- **Dashboard-managed Portfolio**: Projects (content, tech stack, links, images) plus per-project visibility (Live / Coming soon / Hidden) and drag-and-drop ordering, all editable from `/dashboard/admin` and reflected live on the Portfolio page
+- **Inline project demos**: Individual projects can be embedded directly in their Portfolio modal via `<iframe>`, so visitors can try them without leaving the site
+- **E-conomic (budget tracker)**: A full budget-tracking app merged natively into the dashboard, restyled to match the site's theme, gated behind login + Google Sheets/Drive access
+- **CV page**: Multi-role (Software Engineer / IT Support / General) and bilingual (EN/DA) CV, with preset combinations and a print-to-PDF export
 - **Email Integration**: Contact form powered by EmailJS for direct communication
-- **Project Showcase**: Interactive portfolio grid with modal details and demo account information
-- **Social Links**: Direct links to LinkedIn, GitHub, and Facebook
-- **Multi-page Navigation**: Seamless routing between Home, About, Portfolio, and Contact pages
+- **Smooth Animations**: Polished transitions and hover effects throughout
 
 ## 📄 Pages
 
@@ -19,50 +21,51 @@ A modern, responsive portfolio website built with **Angular 19** featuring a cyb
 - Services overview (Web Development, UI/UX Design, Freelancing)
 - Work experience timeline
 - Education history
-- Other professional experience
 
 ### About
 - Personal avatar and bio
-- Tech stack display (10+ technologies)
-- CV download link
+- Tech stack display
 - Social media links
 - Contact information
 
 ### Portfolio
-- Project grid showcase (5 projects)
-- Interactive modal with project details
-- Demo account credentials display
-- GitHub and live preview links
-- Technology stack for each project
+- Project grid, fully managed from `/dashboard/admin` (content, visibility, order) — not hardcoded
+- Interactive modal with project details, demo account credentials, GitHub/live-preview links
+- Selected projects render an inline, interactive `<iframe>` demo instead of just linking out
+
+### CV
+- Role and language presets (EN/DA × Software Engineer/IT Support/General)
+- Print-to-PDF export with a suggested filename per preset
 
 ### Contact
 - Information cards (phone, email, location)
-- Contact form with validation
-- Real-time error messages
-- Success confirmation
-- Social media links
+- Contact form with validation, real-time error messages, and success confirmation
+
+### Dashboard (behind Google login + allowlist)
+- **Economic**: budget tracker — CSV/Sheets import, transaction breakdown, budget table
+- **Admin** (owner only): manage the allowlist/roles, Portfolio project content, visibility, and ordering
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Angular 19 (Standalone Components)
+- **Framework**: Angular 22 (standalone components, native `@if`/`@for` control flow)
 - **Language**: TypeScript
-- **Styling**: SCSS (Dart Sass with @use syntax)
-- **Routing**: Angular Router with lazy loading support
-- **Forms**: Angular FormsModule with two-way binding
-- **Email Service**: EmailJS (@emailjs/browser)
+- **Styling**: SCSS (Dart Sass with `@use` syntax)
+- **Routing**: Angular Router with route guards (`allowedGuard`, `ownerGuard`) and lazy-loaded dashboard routes
+- **Auth & Data**: Firebase (Firestore, Storage) + Google Identity Services for OAuth login
+- **Email Service**: EmailJS (`@emailjs/browser`)
 - **Icons**: Font Awesome 6.4.2 (CDN)
 - **Design System**: Custom cyberpunk design with reusable SCSS mixins
 
 ### Development Tools
-- **Node.js**: v24.14.0
-- **Angular CLI**: @19.2.27
-- **Build Tool**: Webpack (Angular CLI default)
+- **Node.js**: v24.19.0 (Angular 22 requires ≥24.15.0, ≥22.22.3, or ≥26.0.0)
+- **Angular CLI**: @22.1.3
+- **Build Tool**: esbuild-based application builder (Angular CLI default), webpack-based dev server
 
 ## 📦 Installation & Setup
 
 ### Prerequisites
-- Node.js v24.14.0 or higher
-- npm or yarn package manager
+- Node.js ≥24.15.0 (or ≥22.22.3 / ≥26.0.0)
+- npm
 
 ### Steps
 
@@ -77,13 +80,16 @@ A modern, responsive portfolio website built with **Angular 19** featuring a cyb
    npm install
    ```
 
-3. **Configure Environment Variables** (Required for email functionality)
+3. **Firebase & Google login — no setup needed**
+   `src/app/constants/firebase-config.ts` and `google-config.ts` are committed as-is; these are public, client-exposed values by design (Firebase web config and an OAuth client ID aren't secrets — real security comes from Firestore/Storage security rules and Google's own per-file Sheets/Drive permissions, not from hiding these). Cloning the repo is enough to run the app locally against the same Firebase project.
+
+4. **Configure EmailJS** (only thing that needs local setup — required for the Contact form)
    - Copy the example environment file:
      ```bash
      cp src/environments/environment.example.ts src/environments/environment.ts
      cp src/environments/environment.example.ts src/environments/environment.prod.ts
      ```
-   - Update `src/environments/environment.ts` with your EmailJS credentials:
+   - Fill in your EmailJS credentials:
      ```typescript
      export const environment = {
        production: false,
@@ -94,14 +100,9 @@ A modern, responsive portfolio website built with **Angular 19** featuring a cyb
        },
      };
      ```
-   - Update `src/environments/environment.prod.ts` with production credentials
-   
-   **How to get EmailJS credentials:**
-   1. Sign up at [EmailJS](https://www.emailjs.com/)
-   2. Create a new service and template
-   3. Copy your Service ID, Template ID, and Public Key
-   
-   ⚠️ **Security Note**: Environment files are ignored by Git and should never be committed to version control.
+   - **How to get EmailJS credentials:** sign up at [EmailJS](https://www.emailjs.com/), create a service and template, copy the Service ID, Template ID, and Public Key.
+
+   ⚠️ **Security Note**: `environment.ts` / `environment.prod.ts` are gitignored and should never be committed.
 
 ## 🚀 Development
 
@@ -116,11 +117,6 @@ Navigate to `http://localhost:4200/`. The application automatically reloads on c
 ng generate component component-name
 ```
 
-### Code Scaffolding
-```bash
-ng generate --help
-```
-
 ## 🔨 Building
 
 ### Development Build
@@ -133,19 +129,11 @@ ng build --configuration development
 ng build
 ```
 
-Build artifacts are stored in the `dist/` directory. Production builds are optimized for performance and speed.
+Build artifacts are stored in the `dist/personal-website` directory, optimized for performance.
 
 ## 🧪 Testing
 
-### Unit Tests
-```bash
-ng test
-```
-
-### End-to-End Tests
-```bash
-ng e2e
-```
+Karma/Jasmine are configured (Angular CLI defaults, `ng test`), but no test suites have been written yet.
 
 ## 📁 Project Structure
 
@@ -153,28 +141,29 @@ ng e2e
 src/
 ├── app/
 │   ├── pages/
-│   │   ├── home/          # Home page component
-│   │   ├── about/         # About page component
-│   │   ├── portfolio/     # Portfolio page with modal
-│   │   └── contact/       # Contact form page
-│   ├── header/            # Navigation header component
-│   ├── services/          # EmailJS service & form validation
-│   ├── data/              # Static data files
-│   │   ├── services.ts    # Services data
-│   │   ├── data.ts        # Experience & education data
-│   │   ├── projects.ts    # Portfolio projects
-│   │   └── techstack.ts   # Tech stack display
-│   ├── assets/            # Images and static files
-│   │   ├── project-images/
-│   │   └── langLogo/
-│   ├── app.routes.ts      # Route configuration
-│   ├── app.component.ts   # Root component
-│   └── app.component.html # Root template
+│   │   ├── home/                 # Home page
+│   │   ├── about/                # About page
+│   │   ├── portfolio/            # Portfolio page + project modal (incl. iframe embeds)
+│   │   ├── cv/                   # Multi-role/multi-language CV + PDF export
+│   │   ├── contact/               # Contact form page
+│   │   └── dashboard/
+│   │       ├── dashboard.component.ts  # Dashboard landing (allowlist-gated)
+│   │       ├── economic/          # Budget tracker (owner/member only)
+│   │       └── admin/             # Allowlist, roles, Portfolio content management (owner only)
+│   ├── header/                    # Navigation header, incl. Google sign-in
+│   ├── guards/                    # allowedGuard, ownerGuard route guards
+│   ├── services/                  # Firebase app/auth bridge, Google auth, Firestore-backed
+│   │                              # services (projects, project visibility, allowlist), EmailJS
+│   ├── constants/                 # firebase-config.ts, google-config.ts (public, committed)
+│   ├── data/                      # Static content: cv-profile, experience/education, tech stack
+│   ├── assets/                    # Images and static files
+│   ├── app.routes.ts              # Route configuration
+│   ├── app.component.ts           # Root component
+│   └── app.component.html         # Root template
 ├── styles/
-│   ├── cyberpunk-design.scss  # Design system & variables
-│   └── styles.scss            # Global stylesheet
-└── index.html             # Entry point
-
+│   ├── cyberpunk-design.scss      # Design system & variables
+│   └── styles.scss                # Global stylesheet
+└── index.html                     # Entry point
 ```
 
 ## 🎨 Design System
@@ -185,84 +174,27 @@ Custom SCSS design system (`cyberpunk-design.scss`) includes:
 - **Typography Scales**: Responsive font sizes
 - **Spacing Scales**: Consistent padding/margin system
 - **Mixins**: Reusable styles for buttons, borders, glows, flexbox
-- **Animations**: Glitch effect, fade-in, scanline effects
+- **Animations**: Fade-in, glow, and hover effects
+
+## 🔒 Security Model
+
+- **Google login + allowlist is a UX gate, not the real security boundary** — the compiled JS bundle is public either way.
+- **E-conomic's real security** comes from Google's own per-file Sheets/Drive permissions: API calls use the logged-in user's own OAuth token, which can only read files Google has granted that account access to.
+- **Firestore-backed data** (allowlist, Portfolio projects, visibility, order) is protected by **Firestore/Storage security rules**, checking a bridged Firebase Auth session against the owner's email — not by the app's UI. Changes to `firestore.rules`/`storage.rules` are **not auto-deployed** and must be manually published via the Firebase console.
+- Firebase web config and the Google OAuth client ID are intentionally committed (`src/app/constants/`) — they're public, client-facing values by design.
 
 ## 📧 Email Integration
 
-The contact form uses **EmailJS** for sending emails without backend infrastructure:
-
-- Form validation for name, email, and message
-- Real-time error messages
-- Success confirmation display
-- Message length limit (10-250 characters)
-
-Configure in `src/app/services/email.service.ts`.
-
-## 📱 Responsive Breakpoints
-
-- **Desktop**: Full 2-column layout
-- **Tablet** (max-width: 1024px): Single column stacking
-- **Mobile** (max-width: 768px): Optimized mobile view
-
-## 🔒 Performance & Security
-
-### Security Best Practices
-- **Environment Variables**: Sensitive credentials (EmailJS keys) are stored in environment files that are ignored by Git
-- **XSS Protection**: Angular sanitization prevents XSS attacks
-- **No Client-Side Secrets**: API keys are environment-specific and never hardcoded
-- **Production Builds**: Optimized with tree-shaking and minification
-- **Git Configuration**: `.gitignore` excludes all environment files to prevent accidental commits
-
-### Performance
-- Production builds with optimization
-- Asset compression
-- Lazy-loaded routes
-- Code splitting for better caching
-
-### Why Environment Files?
-The project uses Angular's environment configuration system to keep credentials secure:
-- **Development**: `src/environments/environment.ts`
-- **Production**: `src/environments/environment.prod.ts`
-- Both files are in `.gitignore` and not committed to version control
-- Users clone the repo and create their own environment files with their credentials
-- The build system automatically uses the correct file based on configuration
-
-## 📝 Key Files
-
-| File | Purpose |
-|------|---------|
-| `src/app/app.routes.ts` | Central routing configuration |
-| `src/app/services/email.service.ts` | EmailJS integration & validation |
-| `src/styles/cyberpunk-design.scss` | Design system & theme |
-| `src/app/data/projects.ts` | Portfolio project data |
-| `src/app/data/techstack.ts` | Technology stack display |
+The contact form uses **EmailJS** for sending emails without backend infrastructure — form validation, real-time error messages, success confirmation, and a message length limit (10–250 characters). Configure via `src/environments/environment.ts` (see Setup above).
 
 ## 🌐 Deployment
 
 Build for production:
 ```bash
-ng build --prod
+ng build
 ```
 
-Deploy the `dist/personal-website` directory to your hosting provider.
-
-## 📄 Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Deploy the `dist/personal-website` directory to your hosting provider. Remember: any change to `firestore.rules`/`storage.rules` needs a separate, manual publish step in the Firebase console — it isn't part of this build/deploy.
 
 ## Additional Resources
 
