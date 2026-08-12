@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common';
+
 import techstack, { Technology } from '../../data/techstack';
 
 @Component({
   selector: 'app-about',
-  imports: [NgFor],
+  imports: [],
   templateUrl: './about.component.html',
   styleUrl: './about.component.scss'
 })

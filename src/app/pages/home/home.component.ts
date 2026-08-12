@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import services, { Service } from '../../data/services';
 import { workExperiences, otherExperiences, education, Experience, Education } from '../../data/data';
 
 @Component({
   selector: 'app-home',
-  imports: [NgFor, NgIf],
+  imports: [],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

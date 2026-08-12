@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import {
   cvProfile,
   roleContentByRole,
@@ -25,7 +25,7 @@ interface ExportPreset {
 
 @Component({
   selector: 'app-cv',
-  imports: [NgFor, NgIf],
+  imports: [],
   templateUrl: './cv.component.html',
   styleUrl: './cv.component.scss'
 })

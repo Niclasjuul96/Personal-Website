@@ -2,14 +2,14 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CsvParserService } from '../../services/csv-parser.service';
 import { ParsedCsvData, TransactionDetail } from '../../models/types';
 import { defaultCsvStructure, CsvStructure } from '../../constants/csv-structure';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'csv-upload',
   templateUrl: './csv-upload.html',
   styleUrls: ['./csv-upload.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: []
 })
 export class CsvUpload {
   @Output() dataParsed = new EventEmitter<ParsedCsvData>();

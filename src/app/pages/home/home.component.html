@@ -39,11 +39,13 @@
       <div class="underline"></div>
     </div>
     <div class="services-content">
-      <div class="card-service" *ngFor="let service of services">
-        <img [src]="service.img" [alt]="service.name" />
-        <div class="card-title">{{ service.name }}</div>
-        <div class="card-description">{{ service.description }}</div>
-      </div>
+      @for (service of services; track service) {
+        <div class="card-service">
+          <img [src]="service.img" [alt]="service.name" />
+          <div class="card-title">{{ service.name }}</div>
+          <div class="card-description">{{ service.description }}</div>
+        </div>
+      }
     </div>
   </section>
 
@@ -53,11 +55,13 @@
       <div class="underline"></div>
     </div>
     <div class="work-experience-grid">
-      <div class="card-experience" *ngFor="let exp of workExperiences">
-        <div class="card-title">{{ exp.title }}</div>
-        <div class="card-duration">{{ exp.duration }}</div>
-        <div class="card-description">{{ exp.description }}</div>
-      </div>
+      @for (exp of workExperiences; track exp) {
+        <div class="card-experience">
+          <div class="card-title">{{ exp.title }}</div>
+          <div class="card-duration">{{ exp.duration }}</div>
+          <div class="card-description">{{ exp.description }}</div>
+        </div>
+      }
     </div>
   </section>
 
@@ -67,13 +71,19 @@
       <div class="underline"></div>
     </div>
     <div class="education-grid">
-      <div class="card-experience" *ngFor="let edu of education">
-        <div class="card-title">{{ edu.school }}</div>
-        <div class="card-duration">{{ edu.duration }}</div>
-        <ul class="subjects-list" *ngIf="edu.details">
-          <li *ngFor="let subject of getSubjects(edu.details!)">{{ subject }}</li>
-        </ul>
-      </div>
+      @for (edu of education; track edu) {
+        <div class="card-experience">
+          <div class="card-title">{{ edu.school }}</div>
+          <div class="card-duration">{{ edu.duration }}</div>
+          @if (edu.details) {
+            <ul class="subjects-list">
+              @for (subject of getSubjects(edu.details!); track subject) {
+                <li>{{ subject }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
     </div>
   </section>
 
@@ -83,11 +93,13 @@
       <div class="underline"></div>
     </div>
     <div class="other-work-grid">
-      <div class="card-experience" *ngFor="let exp of otherExperiences">
-        <div class="card-title">{{ exp.title }}</div>
-        <div class="card-duration">{{ exp.duration }}</div>
-        <div class="card-description">{{ exp.description }}</div>
-      </div>
+      @for (exp of otherExperiences; track exp) {
+        <div class="card-experience">
+          <div class="card-title">{{ exp.title }}</div>
+          <div class="card-duration">{{ exp.duration }}</div>
+          <div class="card-description">{{ exp.description }}</div>
+        </div>
+      }
     </div>
   </section>
 

@@ -13,79 +13,90 @@
     (dragover)="onDragOver($event)"
     (dragleave)="onDragLeave($event)"
     (drop)="onDrop($event)"
-  >
+    >
     <input
       type="file"
       accept=".csv"
       (change)="onFileSelected($event)"
       class="hidden"
       id="csvUpload"
-    />
+      />
 
-    <div class="drop-icon" aria-hidden="true">&#8682;</div>
-    <p class="drop-title">Drag and drop your CSV file here</p>
-    <p class="drop-or">or</p>
-    <label for="csvUpload" class="upload-label">
-      Choose File
-    </label>
-    <p class="drop-hint">Supports CSV files exported from bank statements</p>
-  </div>
+      <div class="drop-icon" aria-hidden="true">&#8682;</div>
+      <p class="drop-title">Drag and drop your CSV file here</p>
+      <p class="drop-or">or</p>
+      <label for="csvUpload" class="upload-label">
+        Choose File
+      </label>
+      <p class="drop-hint">Supports CSV files exported from bank statements</p>
+    </div>
 
-  <p *ngIf="selectedFile" class="file-name">
-    Selected: {{ selectedFile.name }}
-  </p>
+    @if (selectedFile) {
+      <p class="file-name">
+        Selected: {{ selectedFile.name }}
+      </p>
+    }
 
-  <div *ngIf="showModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h2 class="modal-title">CSV Preview</h2>
-
-      <table class="csv-table">
-        <thead>
-          <tr>
-            <th
-              *ngFor="let col of csvPreview[0]; let colIdx = index"
-              class="csv-cell"
-            >
-              Col {{ colIdx }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of csvPreview">
-            <td *ngFor="let cell of row" class="csv-cell">
-              {{ cell }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <button (click)="toggleEditStructure()" class="toggle-mapping">
-        {{ showEditStructure ? 'Hide column mapping' : 'Edit column mapping' }}
-      </button>
-
-      <div *ngIf="showEditStructure" class="column-mapping">
-        <div *ngFor="let field of columnFields" class="column-field">
-          <label class="column-label">{{ field }}</label>
-          <select
-            class="column-select"
-            [value]="getStructureValue(field)"
-            (change)="onStructureChange(field, $event)"
-          >
-            <option *ngFor="let col of csvPreview[0]; let i = index" [value]="i">
-              Column {{ i }}
-            </option>
-          </select>
+    @if (showModal) {
+      <div class="modal-backdrop">
+        <div class="modal-box">
+          <h2 class="modal-title">CSV Preview</h2>
+          <table class="csv-table">
+            <thead>
+              <tr>
+                @for (col of csvPreview[0]; track col; let colIdx = $index) {
+                  <th
+                    class="csv-cell"
+                    >
+                    Col {{ colIdx }}
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of csvPreview; track row) {
+                <tr>
+                  @for (cell of row; track cell) {
+                    <td class="csv-cell">
+                      {{ cell }}
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+          <button (click)="toggleEditStructure()" class="toggle-mapping">
+            {{ showEditStructure ? 'Hide column mapping' : 'Edit column mapping' }}
+          </button>
+          @if (showEditStructure) {
+            <div class="column-mapping">
+              @for (field of columnFields; track field) {
+                <div class="column-field">
+                  <label class="column-label">{{ field }}</label>
+                  <select
+                    class="column-select"
+                    [value]="getStructureValue(field)"
+                    (change)="onStructureChange(field, $event)"
+                    >
+                    @for (col of csvPreview[0]; track col; let i = $index) {
+                      <option [value]="i">
+                        Column {{ i }}
+                      </option>
+                    }
+                  </select>
+                </div>
+              }
+            </div>
+          }
+          <div class="modal-actions">
+            <button (click)="cancelImport()" class="btn cancel">
+              Cancel
+            </button>
+            <button (click)="confirmImport()" class="btn confirm">
+              Confirm Import
+            </button>
+          </div>
         </div>
       </div>
-
-      <div class="modal-actions">
-        <button (click)="cancelImport()" class="btn cancel">
-          Cancel
-        </button>
-        <button (click)="confirmImport()" class="btn confirm">
-          Confirm Import
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+    }
+  </section>

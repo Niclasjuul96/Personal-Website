@@ -18,62 +18,72 @@
   </section>
 
   <section class="projects-grid">
-    <div
-      class="project-box"
-      *ngFor="let entry of displayProjects"
-      [class.is-teaser]="entry.isTeaser"
-      (click)="openModal(entry)"
-    >
-      <img [src]="entry.project.imgURL" [alt]="entry.project.title" class="project-image" />
-
-      <span class="badge coming-soon" *ngIf="entry.badge === 'coming-soon'">Coming soon</span>
-      <span class="badge hidden-owner-only" *ngIf="entry.badge === 'hidden-owner-only'" title="Hidden from other visitors — you can only see this because you're the owner">
-        Hidden
-      </span>
-    </div>
+    @for (entry of displayProjects; track entry) {
+      <div
+        class="project-box"
+        [class.is-teaser]="entry.isTeaser"
+        (click)="openModal(entry)"
+        >
+        <img [src]="entry.project.imgURL" [alt]="entry.project.title" class="project-image" />
+        @if (entry.badge === 'coming-soon') {
+          <span class="badge coming-soon">Coming soon</span>
+        }
+        @if (entry.badge === 'hidden-owner-only') {
+          <span class="badge hidden-owner-only" title="Hidden from other visitors — you can only see this because you're the owner">
+            Hidden
+          </span>
+        }
+      </div>
+    }
   </section>
 
-  <div class="modal-wrapper" *ngIf="isModalOpen && selectedProject" (click)="closeModal()" role="dialog" aria-modal="true">
-    <div class="modal" [class.has-embed]="!!embedUrl" (click)="$event.stopPropagation()">
-      <div class="content">
-        <span class="close" (click)="closeModal()" role="button" tabindex="0" aria-label="Close modal">
-          &times;
-        </span>
-        <iframe
-          *ngIf="embedUrl"
-          class="embed"
-          [src]="embedUrl"
-          [title]="selectedProject.title + ' live preview'"
-          loading="lazy"
-        ></iframe>
-        <img *ngIf="!embedUrl" class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
-        <h2 class="title">{{ selectedProject.title }}</h2>
-        <p class="detail">{{ selectedProject.detail }}</p>
-        
-        <div class="accounts" *ngIf="selectedProject.accounts && selectedProject.accounts.length > 0">
-          <p><strong>Demo Accounts:</strong></p>
-          <ul>
-            <li *ngFor="let account of selectedProject.accounts">{{ account }}</li>
-          </ul>
-        </div>
-        
-        <p class="techstack">
-          <strong>TechStack used:</strong> {{ selectedProject.tech.join(', ') }}
-        </p>
-        
-        <div class="btns">
-          <button 
-            class="livepreview" 
-            [class.disabled]="!selectedProject.livepreviewurl"
-            (click)="openLivePreview()"
-            [disabled]="!selectedProject.livepreviewurl">
-            Live Preview
-          </button>
-          <button class="Github" (click)="openGithub()">
-            Github Repository
-          </button>
+  @if (isModalOpen && selectedProject) {
+    <div class="modal-wrapper" (click)="closeModal()" role="dialog" aria-modal="true">
+      <div class="modal" [class.has-embed]="!!embedUrl" (click)="$event.stopPropagation()">
+        <div class="content">
+          <span class="close" (click)="closeModal()" role="button" tabindex="0" aria-label="Close modal">
+            &times;
+          </span>
+          @if (embedUrl) {
+            <iframe
+              class="embed"
+              [src]="embedUrl"
+              [title]="selectedProject.title + ' live preview'"
+              loading="lazy"
+            ></iframe>
+          }
+          @if (!embedUrl) {
+            <img class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
+          }
+          <h2 class="title">{{ selectedProject.title }}</h2>
+          <p class="detail">{{ selectedProject.detail }}</p>
+          @if (selectedProject.accounts && selectedProject.accounts.length > 0) {
+            <div class="accounts">
+              <p><strong>Demo Accounts:</strong></p>
+              <ul>
+                @for (account of selectedProject.accounts; track account) {
+                  <li>{{ account }}</li>
+                }
+              </ul>
+            </div>
+          }
+          <p class="techstack">
+            <strong>TechStack used:</strong> {{ selectedProject.tech.join(', ') }}
+          </p>
+          <div class="btns">
+            <button
+              class="livepreview"
+              [class.disabled]="!selectedProject.livepreviewurl"
+              (click)="openLivePreview()"
+              [disabled]="!selectedProject.livepreviewurl">
+              Live Preview
+            </button>
+            <button class="Github" (click)="openGithub()">
+              Github Repository
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  }
 </div>

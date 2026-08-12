@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { ProjectsService, ProjectRecord } from '../../services/projects.service';
@@ -16,7 +16,7 @@ interface DisplayProject {
 
 @Component({
   selector: 'app-portfolio',
-  imports: [NgFor, NgIf],
+  imports: [],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss'
 })

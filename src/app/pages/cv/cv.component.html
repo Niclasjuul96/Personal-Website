@@ -7,25 +7,27 @@
 
     <div class="controls">
       <div class="toggle-group" aria-label="Language selection">
-        <button
-          type="button"
-          *ngFor="let option of languageOptions"
-          [class.active]="lang === option.code"
-          (click)="switchLanguage(option.code)"
-        >
-          {{ option.label }}
-        </button>
+        @for (option of languageOptions; track option) {
+          <button
+            type="button"
+            [class.active]="lang === option.code"
+            (click)="switchLanguage(option.code)"
+            >
+            {{ option.label }}
+          </button>
+        }
       </div>
 
       <div class="toggle-group" aria-label="Role selection">
-        <button
-          type="button"
-          *ngFor="let option of roleOptions"
-          [class.active]="role === option.key"
-          (click)="switchRole(option.key)"
-        >
-          {{ getRoleLabelText(option) }}
-        </button>
+        @for (option of roleOptions; track option) {
+          <button
+            type="button"
+            [class.active]="role === option.key"
+            (click)="switchRole(option.key)"
+            >
+            {{ getRoleLabelText(option) }}
+          </button>
+        }
       </div>
 
       <div class="print-tools">
@@ -33,27 +35,29 @@
           {{ isPrintOptionsOpen ? 'Close Export' : 'Export PDF' }}
         </button>
 
-        <div class="print-panel" *ngIf="isPrintOptionsOpen">
-          <div class="preset-list">
-            <button
-              type="button"
-              *ngFor="let preset of exportPresets"
-              class="preset"
-              [class.active]="preset.lang === lang && preset.role === role"
-              (click)="applyPreset(preset)"
-            >
-              <span>{{ preset.label }}</span>
-              <small>{{ getFilenameForPreset(preset) }}</small>
-            </button>
+        @if (isPrintOptionsOpen) {
+          <div class="print-panel">
+            <div class="preset-list">
+              @for (preset of exportPresets; track preset) {
+                <button
+                  type="button"
+                  class="preset"
+                  [class.active]="preset.lang === lang && preset.role === role"
+                  (click)="applyPreset(preset)"
+                  >
+                  <span>{{ preset.label }}</span>
+                  <small>{{ getFilenameForPreset(preset) }}</small>
+                </button>
+              }
+            </div>
+            <div class="export-actions">
+              <div class="file-preview">{{ currentFilename }}</div>
+              <button type="button" (click)="copyFilename()">{{ copied ? 'Copied' : 'Copy Filename' }}</button>
+              <button type="button" (click)="printCurrentSelection()">Print Current Selection</button>
+              <p class="export-help">{{ getPrintHelpText() }}</p>
+            </div>
           </div>
-
-          <div class="export-actions">
-            <div class="file-preview">{{ currentFilename }}</div>
-            <button type="button" (click)="copyFilename()">{{ copied ? 'Copied' : 'Copy Filename' }}</button>
-            <button type="button" (click)="printCurrentSelection()">Print Current Selection</button>
-            <p class="export-help">{{ getPrintHelpText() }}</p>
-          </div>
-        </div>
+        }
       </div>
     </div>
   </section>
@@ -90,67 +94,75 @@
       {{ role === 'general' ? sectionLabels.combinedExperience[lang] : sectionLabels.workExperience[lang] }}
     </h2>
     <div class="cards">
-      <article class="card" *ngFor="let item of getExperienceForCurrentRole(); let i = index" [style.--stagger-index]="i">
-        <div class="meta-row">
-          <span class="badge" [class.work]="item.isWorkExperience" [class.other]="!item.isWorkExperience">
-            {{ item.isWorkExperience ? sectionLabels.workBadge[lang] : sectionLabels.otherBadge[lang] }}
-          </span>
-          <span class="position">{{ getRoleLabel(i) }}</span>
-        </div>
-
-        <h3>{{ item.label }}</h3>
-
-        <div class="date-lines">
-          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
-        </div>
-
-        <p>{{ getTranslated(item.description) }}</p>
-      </article>
+      @for (item of getExperienceForCurrentRole(); track item; let i = $index) {
+        <article class="card" [style.--stagger-index]="i">
+          <div class="meta-row">
+            <span class="badge" [class.work]="item.isWorkExperience" [class.other]="!item.isWorkExperience">
+              {{ item.isWorkExperience ? sectionLabels.workBadge[lang] : sectionLabels.otherBadge[lang] }}
+            </span>
+            <span class="position">{{ getRoleLabel(i) }}</span>
+          </div>
+          <h3>{{ item.label }}</h3>
+          <div class="date-lines">
+            @for (dateLine of renderDate(item.date); track dateLine) {
+              <div>{{ dateLine }}</div>
+            }
+          </div>
+          <p>{{ getTranslated(item.description) }}</p>
+        </article>
+      }
     </div>
   </section>
 
-  <section class="experience" *ngIf="role !== 'general'">
-    <h2>{{ sectionLabels.otherExperience[lang] }}</h2>
-    <div class="cards">
-      <article class="card" *ngFor="let item of getOtherExperienceForCurrentRole(); let i = index" [style.--stagger-index]="i">
-        <div class="meta-row">
-          <span class="badge other">{{ sectionLabels.otherBadge[lang] }}</span>
-          <span class="position">{{ getRoleLabel(i) }}</span>
-        </div>
-
-        <h3>{{ item.label }}</h3>
-
-        <div class="date-lines">
-          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
-        </div>
-
-        <p>{{ getTranslated(item.description) }}</p>
-      </article>
-    </div>
-  </section>
+  @if (role !== 'general') {
+    <section class="experience">
+      <h2>{{ sectionLabels.otherExperience[lang] }}</h2>
+      <div class="cards">
+        @for (item of getOtherExperienceForCurrentRole(); track item; let i = $index) {
+          <article class="card" [style.--stagger-index]="i">
+            <div class="meta-row">
+              <span class="badge other">{{ sectionLabels.otherBadge[lang] }}</span>
+              <span class="position">{{ getRoleLabel(i) }}</span>
+            </div>
+            <h3>{{ item.label }}</h3>
+            <div class="date-lines">
+              @for (dateLine of renderDate(item.date); track dateLine) {
+                <div>{{ dateLine }}</div>
+              }
+            </div>
+            <p>{{ getTranslated(item.description) }}</p>
+          </article>
+        }
+      </div>
+    </section>
+  }
 
   <section class="education">
     <h2>{{ sectionLabels.education[lang] }}</h2>
     <div class="cards">
-      <article class="card" *ngFor="let item of profile.education; let i = index" [style.--stagger-index]="i">
-        <h3>{{ getEducationTitle(item) }}</h3>
-
-        <div class="date-lines">
-          <div *ngFor="let dateLine of renderDate(item.date)">{{ dateLine }}</div>
-        </div>
-
-        <p>{{ getTranslated(item.description) }}</p>
-      </article>
+      @for (item of profile.education; track item; let i = $index) {
+        <article class="card" [style.--stagger-index]="i">
+          <h3>{{ getEducationTitle(item) }}</h3>
+          <div class="date-lines">
+            @for (dateLine of renderDate(item.date); track dateLine) {
+              <div>{{ dateLine }}</div>
+            }
+          </div>
+          <p>{{ getTranslated(item.description) }}</p>
+        </article>
+      }
     </div>
   </section>
 
   <section class="skills">
     <h2>{{ sectionLabels.softSkills[lang] }}</h2>
     <div class="cards compact">
-      <article class="card" *ngFor="let item of profile.softSkills; let i = index" [style.--stagger-index]="i">
-        <h3>{{ getTranslated(item.name) }}</h3>
-        <p>{{ getTranslated(item.text) }}</p>
-      </article>
+      @for (item of profile.softSkills; track item; let i = $index) {
+        <article class="card" [style.--stagger-index]="i">
+          <h3>{{ getTranslated(item.name) }}</h3>
+          <p>{{ getTranslated(item.text) }}</p>
+        </article>
+      }
     </div>
   </section>
 
@@ -158,7 +170,9 @@
     <div>
       <h2>{{ sectionLabels.languageSkills[lang] }}</h2>
       <ul>
-        <li *ngFor="let item of profile.spokenLanguages">{{ getTranslated(item) }}</li>
+        @for (item of profile.spokenLanguages; track item) {
+          <li>{{ getTranslated(item) }}</li>
+        }
       </ul>
     </div>
 

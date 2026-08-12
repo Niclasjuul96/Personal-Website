@@ -15,29 +15,32 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let t of filteredTransactions; let i = index"
-          class="table-row"
-        >
-          <td class="table-cell">{{ t.date }}</td>
-          <td class="table-cell">{{ t.title }}</td>
-          <td
-            class="table-cell"
+        @for (t of filteredTransactions; track t; let i = $index) {
+          <tr
+            class="table-row"
+            >
+            <td class="table-cell">{{ t.date }}</td>
+            <td class="table-cell">{{ t.title }}</td>
+            <td
+              class="table-cell"
             [ngClass]="{
               negative: t.amount < 0,
               positive: t.amount >= 0
             }"
-          >
-            {{ t.amount | number : '1.2-2' : 'da-DK' }}
-          </td>
-          <td class="table-cell">{{ t.subCategory }}</td>
-        </tr>
+              >
+              {{ t.amount | number : '1.2-2' : 'da-DK' }}
+            </td>
+            <td class="table-cell">{{ t.subCategory }}</td>
+          </tr>
+        }
 
-        <tr *ngIf="filteredTransactions.length === 0">
-          <td colspan="4" class="table-cell no-data">
-            No transactions found for this category and month.
-          </td>
-        </tr>
+        @if (filteredTransactions.length === 0) {
+          <tr>
+            <td colspan="4" class="table-cell no-data">
+              No transactions found for this category and month.
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

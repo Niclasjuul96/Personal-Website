@@ -4,106 +4,119 @@
       <h1 class="app-title">E-conomic</h1>
     </header>
 
-    <section class="sheets-gate" *ngIf="!(authService.hasSheetsAccess | async)">
-      <div class="sheets-gate-icon" aria-hidden="true">&#9906;</div>
-      <h2>Connect Google Sheets &amp; Drive</h2>
-      <p>
-        E-conomic stores your budget in a Google Sheet. Grant access to Sheets and Drive to load
-        and sync your data — this is a separate, extra permission from your site login.
-      </p>
-      <button
-        type="button"
-        class="connect-button"
-        [disabled]="(sheetsAccessStatus$ | async) === 'requesting'"
-        (click)="connectSheets()"
-      >
-        {{ (sheetsAccessStatus$ | async) === 'requesting' ? 'Waiting for Google...' : 'Connect Google Sheets' }}
-      </button>
-      <p class="sheets-gate-error" *ngIf="(sheetsAccessStatus$ | async) === 'denied'">
-        Access wasn't granted. Try again, and approve Sheets/Drive access in the Google popup.
-      </p>
-    </section>
-
-    <div class="setup-area" *ngIf="authService.hasSheetsAccess | async">
-      <div *ngIf="isLoadingData$ | async" class="sync-status sync-loading">
-        <span class="spin" aria-hidden="true">&#8635;</span> Loading your budget data from Google Sheets...
-      </div>
-
-      <div *ngIf="syncStatus$ | async as status" [ngClass]="'sync-' + status" class="sync-status">
-        <span *ngIf="status === 'syncing'">&#8635; Syncing to Google Sheets...</span>
-        <span *ngIf="status === 'success'">&#10003; Synced to Google Sheets</span>
-        <span *ngIf="status === 'error'">&#10005; Sync failed - check console</span>
-      </div>
-
-      <csv-upload
-        (dataParsed)="handleCsvParsed($event)"
-        (transactionsToSync)="syncTransactionsToSheet($event)"
-      ></csv-upload>
-
-      <section class="year-selector">
-        <div class="section-heading">
-          <span class="section-icon" aria-hidden="true">&#9638;</span>
-          <div>
-            <h2>Select Year</h2>
-            <p>Choose the year to view your budget data and transactions</p>
-          </div>
-        </div>
-
-        <div class="year-options" *ngIf="availableYears.length > 0; else noYears">
-          <button
-            *ngFor="let year of availableYears"
-            type="button"
-            class="year-button"
-            [class.active]="selectedYear === year"
-            (click)="selectedYear = year; onYearSelected()"
+    @if (!(authService.hasSheetsAccess | async)) {
+      <section class="sheets-gate">
+        <div class="sheets-gate-icon" aria-hidden="true">&#9906;</div>
+        <h2>Connect Google Sheets &amp; Drive</h2>
+        <p>
+          E-conomic stores your budget in a Google Sheet. Grant access to Sheets and Drive to load
+          and sync your data — this is a separate, extra permission from your site login.
+        </p>
+        <button
+          type="button"
+          class="connect-button"
+          [disabled]="(sheetsAccessStatus$ | async) === 'requesting'"
+          (click)="connectSheets()"
           >
-            {{ year }}
-          </button>
-        </div>
-
-        <ng-template #noYears>
-          <div class="year-empty">Import a CSV to populate years</div>
-        </ng-template>
-
+          {{ (sheetsAccessStatus$ | async) === 'requesting' ? 'Waiting for Google...' : 'Connect Google Sheets' }}
+        </button>
+        @if ((sheetsAccessStatus$ | async) === 'denied') {
+          <p class="sheets-gate-error">
+            Access wasn't granted. Try again, and approve Sheets/Drive access in the Google popup.
+          </p>
+        }
       </section>
+    }
 
-      <aside class="sheets-column">
-        <sheet-selector></sheet-selector>
-      </aside>
-    </div>
+    @if (authService.hasSheetsAccess | async) {
+      <div class="setup-area">
+        @if (isLoadingData$ | async) {
+          <div class="sync-status sync-loading">
+            <span class="spin" aria-hidden="true">&#8635;</span> Loading your budget data from Google Sheets...
+          </div>
+        }
+        @if (syncStatus$ | async; as status) {
+          <div [ngClass]="'sync-' + status" class="sync-status">
+            @if (status === 'syncing') {
+              <span>&#8635; Syncing to Google Sheets...</span>
+            }
+            @if (status === 'success') {
+              <span>&#10003; Synced to Google Sheets</span>
+            }
+            @if (status === 'error') {
+              <span>&#10005; Sync failed - check console</span>
+            }
+          </div>
+        }
+        <csv-upload
+          (dataParsed)="handleCsvParsed($event)"
+          (transactionsToSync)="syncTransactionsToSheet($event)"
+        ></csv-upload>
+        <section class="year-selector">
+          <div class="section-heading">
+            <span class="section-icon" aria-hidden="true">&#9638;</span>
+            <div>
+              <h2>Select Year</h2>
+              <p>Choose the year to view your budget data and transactions</p>
+            </div>
+          </div>
+          @if (availableYears.length > 0) {
+            <div class="year-options">
+              @for (year of availableYears; track year) {
+                <button
+                  type="button"
+                  class="year-button"
+                  [class.active]="selectedYear === year"
+                  (click)="selectedYear = year; onYearSelected()"
+                  >
+                  {{ year }}
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="year-empty">Import a CSV to populate years</div>
+          }
+        </section>
+        <aside class="sheets-column">
+          <sheet-selector></sheet-selector>
+        </aside>
+      </div>
+    }
 
-    <section
-      class="budget-entry"
-      *ngIf="(authService.hasSheetsAccess | async) && !selectedYear && !(isLoadingData$ | async)"
-    >
-      <div class="budget-entry-icon" aria-hidden="true">&#9606;&#9608;&#9604;</div>
-      <h2>Budget Tables</h2>
-      <p>Income, Expenses and Disposable Income tables will appear here for the selected year.</p>
-    </section>
+    @if ((authService.hasSheetsAccess | async) && !selectedYear && !(isLoadingData$ | async)) {
+      <section
+        class="budget-entry"
+        >
+        <div class="budget-entry-icon" aria-hidden="true">&#9606;&#9608;&#9604;</div>
+        <h2>Budget Tables</h2>
+        <p>Income, Expenses and Disposable Income tables will appear here for the selected year.</p>
+      </section>
+    }
 
-    <section
-      class="budget-entry"
-      *ngIf="(authService.hasSheetsAccess | async) && !selectedYear && (isLoadingData$ | async)"
-    >
-      <div class="budget-entry-icon spin" aria-hidden="true">&#8635;</div>
-      <h2>Loading your budget...</h2>
-      <p>Fetching transactions from Google Sheets.</p>
-    </section>
+    @if ((authService.hasSheetsAccess | async) && !selectedYear && (isLoadingData$ | async)) {
+      <section
+        class="budget-entry"
+        >
+        <div class="budget-entry-icon spin" aria-hidden="true">&#8635;</div>
+        <h2>Loading your budget...</h2>
+        <p>Fetching transactions from Google Sheets.</p>
+      </section>
+    }
 
-    <ng-container *ngIf="selectedYear">
+    @if (selectedYear) {
       <budget-table
         [incomeData]="incomeData"
         [expenseData]="expenseData"
         [disposableIncomeData]="disposableIncomeData"
         (cellClick)="onCellClick($event)"
       ></budget-table>
-
-      <transaction-details
-        *ngIf="selectedDetails"
-        [selectedDetails]="selectedDetails"
-        [transactions]="filteredTransactions"
-        (close)="onCloseDetails()"
-      ></transaction-details>
-    </ng-container>
+      @if (selectedDetails) {
+        <transaction-details
+          [selectedDetails]="selectedDetails"
+          [transactions]="filteredTransactions"
+          (close)="onCloseDetails()"
+        ></transaction-details>
+      }
+    }
   </section>
 </main>

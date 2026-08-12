@@ -83,10 +83,12 @@
       <div class="heading">Tech Stack</div>
       <div class="underline"></div>
       <div class="tech-items">
-        <div class="tech-item" *ngFor="let tech of techstack">
-          <img [src]="tech.icon" [alt]="tech.name" />
-          <p>{{ tech.name }}</p>
-        </div>
+        @for (tech of techstack; track tech) {
+          <div class="tech-item">
+            <img [src]="tech.icon" [alt]="tech.name" />
+            <p>{{ tech.name }}</p>
+          </div>
+        }
       </div>
     </div>
   </section>
