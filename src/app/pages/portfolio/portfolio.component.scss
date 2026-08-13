@@ -312,6 +312,13 @@
         }
       }
 
+      .last-updated {
+        font-size: 0.8rem;
+        color: $text-muted;
+        font-family: $font-mono;
+        letter-spacing: 0.3px;
+      }
+
       .detail {
         font-size: 0.95rem;
         color: $text-secondary !important;

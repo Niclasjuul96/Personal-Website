@@ -33,8 +33,11 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   isModalOpen = false;
   /** Trusted only because livepreviewurl is admin-entered (owner-only Firestore write), never visitor-supplied. */
   embedUrl: SafeResourceUrl | null = null;
+  /** Null while loading, and also the failsafe: any fetch/parse failure just leaves this null so the UI simply omits the date instead of showing an error. */
+  githubLastUpdated: string | null = null;
 
   private subscription?: Subscription;
+  private githubLastUpdatedCache = new Map<string, string | null>();
 
   ngOnInit(): void {
     document.title = 'Portfolio | Niclas Schæffer Portfolio';
@@ -69,18 +72,21 @@ export class PortfolioComponent implements OnInit, OnDestroy {
       entry.project.embeddable && entry.project.livepreviewurl
         ? this.sanitizer.bypassSecurityTrustResourceUrl(entry.project.livepreviewurl)
         : null;
+    this.githubLastUpdated = null;
     this.isModalOpen = true;
     // `.body`'s own stacking context (see cyberpunk-design.scss) otherwise
     // traps this fixed-position modal below the header, no matter how high
     // its own z-index is — a body-level class is the same escape hatch
     // this codebase already uses for CV print mode (see styles.scss).
     document.body.classList.add('modal-open');
+    this.loadGithubLastUpdated(entry.project.githuburl);
   }
 
   closeModal(): void {
     this.isModalOpen = false;
     this.selectedProject = null;
     this.embedUrl = null;
+    this.githubLastUpdated = null;
     document.body.classList.remove('modal-open');
   }
 
@@ -122,5 +128,74 @@ export class PortfolioComponent implements OnInit, OnDestroy {
     }
 
     return entries;
+  }
+
+  /**
+   * Unauthenticated GitHub API call (public repo data, no token needed) —
+   * cached per repo so re-opening the same project's modal doesn't refetch.
+   * Any failure (network, rate limit, non-GitHub URL, missing field) just
+   * leaves githubLastUpdated null; the template omits the line entirely
+   * rather than showing an error.
+   */
+  private async loadGithubLastUpdated(githuburl: string): Promise<void> {
+    if (this.githubLastUpdatedCache.has(githuburl)) {
+      this.githubLastUpdated = this.githubLastUpdatedCache.get(githuburl) ?? null;
+      return;
+    }
+
+    const result = await this.fetchGithubLastUpdated(githuburl);
+    this.githubLastUpdatedCache.set(githuburl, result);
+
+    // The visitor may have closed the modal or opened a different project
+    // before this resolved — only apply a now-stale result if it's still
+    // the one currently open.
+    if (this.selectedProject?.githuburl === githuburl) {
+      this.githubLastUpdated = result;
+    }
+  }
+
+  private async fetchGithubLastUpdated(githuburl: string): Promise<string | null> {
+    const repoPath = this.parseGithubRepoPath(githuburl);
+    if (!repoPath) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`https://api.github.com/repos/${repoPath}`);
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      if (!data.pushed_at) {
+        return null;
+      }
+
+      return new Date(data.pushed_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  private parseGithubRepoPath(githuburl: string): string | null {
+    try {
+      const url = new URL(githuburl);
+      if (url.hostname !== 'github.com') {
+        return null;
+      }
+
+      const [owner, repo] = url.pathname.split('/').filter(Boolean);
+      if (!owner || !repo) {
+        return null;
+      }
+
+      return `${owner}/${repo.replace(/\.git$/, '')}`;
+    } catch {
+      return null;
+    }
   }
 }

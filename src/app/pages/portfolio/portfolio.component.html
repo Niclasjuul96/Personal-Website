@@ -56,6 +56,9 @@
             <img class="image" [src]="selectedProject.imgURL" [alt]="selectedProject.title" />
           }
           <h2 class="title">{{ selectedProject.title }}</h2>
+          @if (githubLastUpdated) {
+            <p class="last-updated">Last updated: {{ githubLastUpdated }}</p>
+          }
           <p class="detail">{{ selectedProject.detail }}</p>
           @if (selectedProject.accounts && selectedProject.accounts.length > 0) {
             <div class="accounts">
